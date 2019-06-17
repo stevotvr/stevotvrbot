@@ -1,0 +1,12 @@
+<?php
+
+namespace StevoTVRBot;
+
+class Config
+{
+    const DBHOST = '';
+    const DBUSER = '';
+    const DBPASS = '';
+    const DBNAME = '';
+    const SECRET = '';
+}

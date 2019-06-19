@@ -27,7 +27,7 @@ class TipsBot extends Bot
             return;
         }
 
-        $user = filter_input(INPUT_GET, 'user') or '';
+        $user = filter_input(INPUT_GET, 'user') ?? '';
         $tip = trim(filter_input(INPUT_GET, 'tip'));
         $len = strlen($tip);
 

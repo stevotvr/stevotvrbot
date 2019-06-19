@@ -11,6 +11,9 @@ class ItemsBot extends Bot
 			case 'find':
 			    $this->find();
 				break;
+			case 'sell':
+			    $this->sell();
+				break;
 		}
 	}
 
@@ -55,6 +58,35 @@ class ItemsBot extends Bot
             $stmt->close();
 
 	        printf('Found %s worth $%d', $description, $value);
+        }
+ 	}
+
+ 	private function sell()
+ 	{
+ 		$user = filter_input(INPUT_GET, 'user');
+ 		$itemId = filter_input(INPUT_GET, 'item', FILTER_VALIDATE_INT, ['min_range' => 0]);
+
+ 		if (empty($user) || !$itemId)
+ 		{
+ 			return;
+ 		}
+
+        if ($stmt = $this->db()->prepare("SELECT value, description FROM inventory WHERE id = ? AND user = ?;"))
+        {
+            $stmt->bind_param('is', $itemId, $user);
+            $stmt->execute();
+            $stmt->bind_result($value, $description);
+            $valid = $stmt->fetch();
+            $stmt->close();
+
+	        if ($valid && $stmt = $this->db()->prepare("DELETE FROM inventory WHERE id = ?;"))
+	        {
+	            $stmt->bind_param('i', $itemId);
+	            $stmt->execute();
+	            $stmt->close();
+
+		        printf('!addpoints %s %d', $user, $value);
+	        }
         }
  	}
 }

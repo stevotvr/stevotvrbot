@@ -78,20 +78,22 @@ class ItemsBot extends Bot
 		}
 
  		$user = $this->getUser();
- 		$itemId = filter_input(INPUT_GET, 'item', FILTER_VALIDATE_INT, ['min_range' => 0]);
+ 		$item = filter_input(INPUT_GET, 'item');
 
- 		if (!$user || !$itemId)
+ 		if (!$user || !$item)
  		{
 	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
 	        echo '400 Bad Request';
  			return;
  		}
 
-        if ($stmt = $this->db()->prepare("SELECT value, description FROM inventory WHERE id = ? AND user = ?;"))
+ 		$item = trim($item);
+
+        if ($stmt = $this->db()->prepare("SELECT id, value FROM inventory WHERE user = ? AND description = ? LIMIT 1;"))
         {
-            $stmt->bind_param('is', $itemId, $user);
+            $stmt->bind_param('ss', $user, $item);
             $stmt->execute();
-            $stmt->bind_result($value, $description);
+            $stmt->bind_result($itemId, $value);
             $valid = $stmt->fetch();
             $stmt->close();
 

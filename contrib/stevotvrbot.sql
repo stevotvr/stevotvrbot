@@ -46,7 +46,8 @@ ALTER TABLE `inventory`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user` (`user`),
   ADD KEY `modifier` (`modifier`),
-  ADD KEY `item` (`item`);
+  ADD KEY `item` (`item`),
+  ADD KEY `description` (`description`);
 
 ALTER TABLE `items`
   ADD PRIMARY KEY (`id`),
@@ -57,7 +58,10 @@ ALTER TABLE `modifiers`
   ADD KEY `weight` (`weight`);
 
 ALTER TABLE `tips`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user` (`user`),
+  ADD KEY `status` (`status`),
+  ADD KEY `time` (`time`);
 
 
 ALTER TABLE `inventory`

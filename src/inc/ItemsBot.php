@@ -24,6 +24,15 @@ class ItemsBot extends Bot
 			return;
 		}
 
+		$user = filter_input(INPUT_GET, 'user');
+
+ 		if (empty($user))
+ 		{
+	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+	        echo '400 Bad Request';
+ 			return;
+ 		}
+
 		$itemId = $itemName = $itemValue = $modId = $modDesc = $modValue= null;
 
         if ($stmt = $this->db()->prepare("SELECT id, item, value FROM items ORDER BY -LOG(RAND()) / weight LIMIT 1;"))
@@ -44,10 +53,10 @@ class ItemsBot extends Bot
 
         if (!$itemId || !$modId)
         {
+	        echo 'No items could be found.';
         	return;
         }
 
-		$user = filter_input(INPUT_GET, 'user') ?? '';
         $description = $modDesc . ' ' . $itemName;
         $value = ($modValue / 100) * $itemValue;
 
@@ -63,11 +72,18 @@ class ItemsBot extends Bot
 
  	private function sell()
  	{
+		if (!$this->authorize())
+		{
+			return;
+		}
+
  		$user = filter_input(INPUT_GET, 'user');
  		$itemId = filter_input(INPUT_GET, 'item', FILTER_VALIDATE_INT, ['min_range' => 0]);
 
  		if (empty($user) || !$itemId)
  		{
+	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+	        echo '400 Bad Request';
  			return;
  		}
 
@@ -79,7 +95,13 @@ class ItemsBot extends Bot
             $valid = $stmt->fetch();
             $stmt->close();
 
-	        if ($valid && $stmt = $this->db()->prepare("DELETE FROM inventory WHERE id = ?;"))
+            if (!$value)
+            {
+            	echo 'That item could not be found in your inventory.';
+            	return;
+            }
+
+	        if ($stmt = $this->db()->prepare("DELETE FROM inventory WHERE id = ?;"))
 	        {
 	            $stmt->bind_param('i', $itemId);
 	            $stmt->execute();

@@ -66,7 +66,7 @@ class ItemsBot extends Bot
             $stmt->execute();
             $stmt->close();
 
-	        printf('Found %s worth $%d', $description, $value);
+	        printf('%s found %s worth $%d', $user, $description, $value);
         }
  	}
 
@@ -97,7 +97,7 @@ class ItemsBot extends Bot
 
             if (!$value)
             {
-            	echo 'That item could not be found in your inventory.';
+            	printf('%s, that item could not be found in your inventory.', $user);
             	return;
             }
 

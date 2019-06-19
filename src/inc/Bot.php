@@ -38,4 +38,19 @@ abstract class Bot
 
         return true;
     }
+
+    protected final function getUser(): string
+    {
+    	$options = [
+    		'regexp' => '/^[0-9a-zA-Z]\w{1,24}$/',
+    	];
+    	$user = filter_input(INPUT_GET, 'user', FILTER_VALIDATE_REGEXP, [ 'options' => $options ]);
+
+    	if (empty($user))
+    	{
+    		return '';
+    	}
+
+    	return $user;
+    }
 }

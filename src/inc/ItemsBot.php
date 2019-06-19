@@ -24,9 +24,9 @@ class ItemsBot extends Bot
 			return;
 		}
 
-		$user = filter_input(INPUT_GET, 'user');
+		$user = $this->getUser();
 
- 		if (empty($user))
+ 		if (!$user)
  		{
 	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
 	        echo '400 Bad Request';
@@ -77,10 +77,10 @@ class ItemsBot extends Bot
 			return;
 		}
 
- 		$user = filter_input(INPUT_GET, 'user');
+ 		$user = $this->getUser();
  		$itemId = filter_input(INPUT_GET, 'item', FILTER_VALIDATE_INT, ['min_range' => 0]);
 
- 		if (empty($user) || !$itemId)
+ 		if (!$user || !$itemId)
  		{
 	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
 	        echo '400 Bad Request';

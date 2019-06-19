@@ -27,7 +27,15 @@ class TipsBot extends Bot
             return;
         }
 
-        $user = filter_input(INPUT_GET, 'user') ?? '';
+        $user = $this->getUser();
+
+ 		if (!$user)
+ 		{
+	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+	        echo '400 Bad Request';
+ 			return;
+ 		}
+
         $tip = trim(filter_input(INPUT_GET, 'tip'));
         $len = strlen($tip);
 

@@ -80,10 +80,16 @@ class ItemsBot extends Bot
  		$user = $this->getUser();
  		$item = filter_input(INPUT_GET, 'item');
 
- 		if (!$user || !$item)
+ 		if (!$user)
  		{
 	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
 	        echo '400 Bad Request';
+ 			return;
+ 		}
+
+ 		if (!$item)
+ 		{
+	        echo 'Usage: !sell <item>';
  			return;
  		}
 

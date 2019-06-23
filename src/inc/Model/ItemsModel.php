@@ -78,4 +78,30 @@ class ItemsModel extends Model
 
         return false;
  	}
+
+ 	public function getInventory()
+ 	{
+ 		if ($stmt = self::db()->prepare("SELECT user, description, value, COUNT(*) FROM inventory GROUP BY user, description, value ORDER BY user ASC, description ASC;"))
+ 		{
+ 			$inventory = [];
+
+ 			$stmt->execute();
+ 			$stmt->bind_result($user, $description, $value, $quantity);
+
+ 			while ($stmt->fetch())
+ 			{
+ 				$inventory[$user][] = [
+ 					'description'	=> $description,
+ 					'quantity'		=> $quantity,
+ 					'value'			=> $value,
+ 				];
+ 			}
+
+ 			$stmt->close();
+
+ 			return $inventory;
+ 		}
+
+ 		return false;
+ 	}
 }

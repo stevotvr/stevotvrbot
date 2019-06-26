@@ -2,13 +2,13 @@
 		<header>
 			<h1>Inventory</h1>
 		</header>
-<?php foreach ($inventory as $user => $items): ?>
+<?php foreach ($inventory as $name => $user): ?>
 		<section class="user">
 			<header>
-				<h2><?php echo $user; ?></h2>
+				<h2><?php echo $name; ?></h2>
 			</header>
 			<ul>
-<?php foreach ($items as $item): ?>
+<?php foreach ($user['items'] as $item): ?>
 				<li>
 					<h3><?php echo $item['item']; ?></h3>
 					</header>
@@ -24,6 +24,10 @@
 <?php endforeach; ?>
 			</ul>
 			<footer>
+				<dl>
+					<dt>Total:</dt>
+					<dd><?php echo $user['total']['items']; ?> items worth $<?php echo $user['total']['value']; ?></dd>
+				</dl>
 			</footer>
 		</section>
 <?php endforeach; ?>

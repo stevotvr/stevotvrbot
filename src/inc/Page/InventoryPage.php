@@ -8,18 +8,36 @@ class InventoryPage extends Page
 {
     public function run()
     {
+    	$data = [
+    		'inventory'	=> [],
+    	];
+
     	$inventory = ItemsModel::getInventory();
     	if (is_array($inventory))
     	{
-    		foreach ($inventory as &$user)
+    		foreach ($inventory as $item)
     		{
-    			foreach ($user as &$item)
+    			if (!isset($data['inventory'][$item['user']]))
     			{
-    				$item['description'] = htmlspecialchars($item['description']);
+    				$data['inventory'][$item['user']] = [
+    					'total'	=> [
+    						'items'	=> 0,
+    						'value'	=> 0,
+    					],
+    				];
     			}
+
+    			$data['inventory'][$item['user']]['items'][] = [
+    				'item'		=> htmlspecialchars($item['item']),
+    				'modifier'	=> htmlspecialchars($item['modifier']),
+    				'quantity'	=> $item['quantity'],
+    				'value'		=> $item['value'],
+    			];
+    			$data['inventory'][$item['user']]['total']['items'] += $item['quantity'];
+    			$data['inventory'][$item['user']]['total']['value'] += $item['value'];
     		}
 
-    		$this->showTemplate('inventory', ['inventory' => $inventory]);
+    		$this->showTemplate('inventory', $data);
     	}
     }
 }

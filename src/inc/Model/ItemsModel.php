@@ -90,7 +90,8 @@ class ItemsModel extends Model
 
  			while ($stmt->fetch())
  			{
- 				$inventory[$user][] = [
+ 				$inventory[] = [
+ 					'user'		=> $user,
  					'item'		=> $item,
  					'modifier'	=> $modifier,
  					'quantity'	=> $quantity,

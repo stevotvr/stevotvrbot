@@ -81,19 +81,20 @@ class ItemsModel extends Model
 
  	public function getInventory()
  	{
- 		if ($stmt = self::db()->prepare("SELECT user, description, value, COUNT(*) FROM inventory GROUP BY user, description, value ORDER BY user ASC, description ASC;"))
+ 		if ($stmt = self::db()->prepare("SELECT inventory.user, items.item, modifiers.description, inventory.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item LEFT JOIN modifiers ON modifiers.id = inventory.modifier GROUP BY inventory.user, items.item, modifiers.description, inventory.value ORDER BY inventory.user ASC, items.item ASC;"))
  		{
  			$inventory = [];
 
  			$stmt->execute();
- 			$stmt->bind_result($user, $description, $value, $quantity);
+ 			$stmt->bind_result($user, $item, $modifier, $value, $quantity);
 
  			while ($stmt->fetch())
  			{
  				$inventory[$user][] = [
- 					'description'	=> $description,
- 					'quantity'		=> $quantity,
- 					'value'			=> $value,
+ 					'item'		=> $item,
+ 					'modifier'	=> $modifier,
+ 					'quantity'	=> $quantity,
+ 					'value'		=> $value,
  				];
  			}
 

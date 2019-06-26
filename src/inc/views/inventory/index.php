@@ -1,18 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Inventory</title>
-</head>
-<body>
-	<h1>Inventory</h1>
+	<section id="inventory">
+		<header>
+			<h1>Inventory</h1>
+		</header>
 <?php foreach ($inventory as $user => $items): ?>
-	<h2><?php echo $user; ?></h2>
-	<ul>
+		<section class="user">
+			<header>
+				<h2><?php echo $user; ?></h2>
+			</header>
+			<ul>
 <?php foreach ($items as $item): ?>
-		<li><?php echo $item['description']; ?> worth $<?php echo $item['value']; ?><?php if ($item['quantity'] > 1): ?> (x<?php echo $item['quantity']; ?>)<?php endif; ?></li>
+				<li>
+					<h3><?php echo $item['item']; ?></h3>
+					</header>
+					<dl>
+						<dt>Status:</dt>
+						<dd><?php echo $item['modifier']; ?></dd><br>
+						<dt>Value:</dt>
+						<dd>$<?php echo $item['value']; ?></dd><br>
+						<dt>Quantity:</dt>
+						<dd><?php echo $item['quantity']; ?></dd>
+					</dl>
+				</li>
 <?php endforeach; ?>
-	</ul>
+			</ul>
+			<footer>
+			</footer>
+		</section>
 <?php endforeach; ?>
-</body>
-</html>
+	</section>

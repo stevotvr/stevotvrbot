@@ -32,7 +32,10 @@ abstract class Page
 
     protected final function showTemplate(string $template, array $data = array())
     {
+    	$dir = __DIR__ . '/../views/';
     	extract($data);
-    	require __DIR__ . '/../views/' . $template . '/index.php';
+    	require $dir . 'header.php';
+    	require $dir . $template . '/index.php';
+    	require $dir . 'footer.php';
     }
 }

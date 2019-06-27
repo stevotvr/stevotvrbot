@@ -1,7 +1,8 @@
 	<section id="inventory">
 		<header>
-			<h1>Inventory</h1>
+			<h1><a href="/inventory">Inventory</a> - <?php echo $user; ?></h1>
 		</header>
+<?php if (!empty($inventory)): ?>
 <?php foreach ($inventory as $name => $user): ?>
 		<section class="user">
 			<header>
@@ -31,4 +32,9 @@
 			</footer>
 		</section>
 <?php endforeach; ?>
+<?php else: ?>
+		<section class="user">
+			<p>No items found.</p>
+		</section>
+<?php endif; ?>
 	</section>

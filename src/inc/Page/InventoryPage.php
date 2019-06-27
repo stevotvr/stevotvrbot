@@ -10,6 +10,7 @@ class InventoryPage extends Page
     {
     	$data = [
     		'inventory'	=> [],
+    		'user'		=> htmlspecialchars($params[0] ?? 'All Users'),
     	];
 
     	$inventory = ItemsModel::getInventory($params[0]);

@@ -6,26 +6,17 @@ abstract class Page
 {
 	public static function route(string $page, array $params)
 	{
-		$object = null;
-
-		switch ($page)
+		$className = 'StevoTVRBot\\Page\\' . ucfirst(strtolower($page)) . 'Page';
+		if (class_exists($className))
 		{
-			case 'bot':
-				$object = new BotPage();
-				break;
-			case 'inventory':
-				$object = new InventoryPage();
-				break;
-			case 'tips':
-				$object = new TipsPage();
-				break;
-			default:
-		        header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-		        echo '404 Not Found';
-		        return;
+			$object = new $className();
+			$object->run($params);
 		}
-
-		$object->run($params);
+		else
+		{
+	        header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+	        echo '404 Not Found';
+		}
 	}
 
     protected abstract function run(array $params);

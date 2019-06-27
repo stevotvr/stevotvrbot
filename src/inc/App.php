@@ -12,7 +12,7 @@ class App
     		'regexp' => '/^[\w\-\/]*$/',
     	];
 		$page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_REGEXP, [ 'options' => $options ]) ?? 'index';
-		$page = explode('/', $page);
+		$page = explode('/', rtrim($page, '/'));
 		Page::route(array_shift($page), $page);
 	}
 }

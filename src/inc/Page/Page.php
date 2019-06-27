@@ -4,7 +4,7 @@ namespace StevoTVRBot\Page;
 
 abstract class Page
 {
-	public static function route($page)
+	public static function route(string $page, array $params)
 	{
 		$object = null;
 
@@ -25,10 +25,10 @@ abstract class Page
 		        return;
 		}
 
-		$object->run();
+		$object->run($params);
 	}
 
-    protected abstract function run();
+    protected abstract function run(array $params);
 
     protected final function showTemplate(string $template, array $data = array())
     {

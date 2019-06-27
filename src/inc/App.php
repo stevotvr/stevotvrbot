@@ -8,6 +8,11 @@ class App
 {
 	public static function run()
 	{
-		Page::route(filter_input(INPUT_GET, 'page'));
+    	$options = [
+    		'regexp' => '/^[\w\-\/]*$/',
+    	];
+		$page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_REGEXP, [ 'options' => $options ]) ?? 'index';
+		$page = explode('/', $page);
+		Page::route(array_shift($page), $page);
 	}
 }

@@ -7,7 +7,7 @@ use StevoTVRBot\Config;
 
 class BotPage extends Page
 {
-    public function run()
+    public function run(array $params)
     {
         if (filter_input(INPUT_GET, 'secret') !== Config::SECRET)
         {

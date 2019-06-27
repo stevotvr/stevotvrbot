@@ -79,12 +79,23 @@ class ItemsModel extends Model
         return false;
  	}
 
- 	public function getInventory()
+ 	public function getInventory(string $user = null)
  	{
- 		if ($stmt = self::db()->prepare("SELECT inventory.user, items.item, modifiers.description, inventory.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item LEFT JOIN modifiers ON modifiers.id = inventory.modifier GROUP BY inventory.user, items.item, modifiers.description, inventory.value ORDER BY inventory.user ASC, items.item ASC;"))
+ 		$sql = "SELECT inventory.user, items.item, modifiers.description, inventory.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item LEFT JOIN modifiers ON modifiers.id = inventory.modifier ";
+ 		if ($user)
+ 		{
+ 			$sql .= "WHERE inventory.user = ? ";
+ 		}
+ 		$sql .= "GROUP BY inventory.user, items.item, modifiers.description, inventory.value ORDER BY inventory.user ASC, items.item ASC;";
+
+ 		if ($stmt = self::db()->prepare($sql))
  		{
  			$inventory = [];
 
+	 		if ($user)
+	 		{
+	 			$stmt->bind_param('s', $user);
+	 		}
  			$stmt->execute();
  			$stmt->bind_result($user, $item, $modifier, $value, $quantity);
 

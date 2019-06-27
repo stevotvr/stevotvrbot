@@ -6,13 +6,13 @@ use StevoTVRBot\Model\ItemsModel;
 
 class InventoryPage extends Page
 {
-    public function run()
+    public function run(array $params)
     {
     	$data = [
     		'inventory'	=> [],
     	];
 
-    	$inventory = ItemsModel::getInventory();
+    	$inventory = ItemsModel::getInventory($params[0]);
     	if (is_array($inventory))
     	{
     		foreach ($inventory as $item)

@@ -6,6 +6,7 @@ abstract class Page
 {
 	public static function route(string $page, array $params)
 	{
+		$page = empty($page) ? 'index' : $page;
 		$className = 'StevoTVRBot\\Page\\' . ucfirst(strtolower($page)) . 'Page';
 		if (class_exists($className))
 		{

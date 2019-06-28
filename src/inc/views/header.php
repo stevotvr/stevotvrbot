@@ -19,3 +19,11 @@
    	<title>Inventory</title>
 </head>
 <body>
+	<nav id="site-nav">
+		<a href="/"><img src="/img/logo.png" alt="Home" width="28" height="28"></a>
+		<ul>
+			<li><a href="/">Home</a></li>
+			<li><a href="/inventory">Inventory</a></li>
+		</ul>
+		<h1>StevoTVRBot</h1>
+	</nav>

@@ -1,17 +1,17 @@
 	<section id="inventory">
 		<header>
-			<h1><a href="/inventory">Inventory</a> - <?php echo $user; ?></h1>
+			<h2><a href="/inventory">Inventory</a> - <?php echo $user; ?></h2>
 		</header>
 <?php if (!empty($inventory)): ?>
 <?php foreach ($inventory as $name => $user): ?>
 		<section class="user">
 			<header>
-				<h2><?php echo $name; ?></h2>
+				<h3><?php echo $name; ?></h3>
 			</header>
 			<ul>
 <?php foreach ($user['items'] as $item): ?>
 				<li>
-					<h3><?php echo $item['item']; ?></h3>
+					<h4><?php echo $item['item']; ?></h4>
 					</header>
 					<dl>
 						<dt>Status:</dt>

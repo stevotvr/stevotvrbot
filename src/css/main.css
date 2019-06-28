@@ -7,19 +7,64 @@ body {
 	color: #FFF;
 	font-family: Helvetica, sans-serif;
 	font-size: 14px;
-	padding: 10px;
 }
 
 h1 {
-	font-size: 28px;
-}
-
-h2 {
 	font-size: 20px;
 }
 
+h2 {
+	font-size: 28px;
+}
+
 h3 {
+	font-size: 20px;
+}
+
+h4 {
 	font-size: 16px;
+}
+
+a:link, a:visited {
+	color: #FFF;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+section {
+	margin: 10px;
+}
+
+#site-nav {
+	background: #090015;
+	display: block;
+	height: 30px;
+	padding: 8px;
+}
+
+#site-nav img, #site-nav ul, #site-nav li {
+	float: left;
+}
+
+#site-nav h1 {
+	float: right;
+	line-height: 30px;
+}
+
+#site-nav ul {
+	list-style: none;
+	padding-left: 10px;
+}
+
+#site-nav li a {
+	display: block;
+	font-size: 18px;
+	line-height: 30px;
+	margin: -8px 0;
+	padding: 10px;
 }
 
 #inventory .user {

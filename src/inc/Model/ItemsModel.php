@@ -1,9 +1,29 @@
 <?php
 
+/**
+ * StevoTVRBot. Supplies a custom API for the StreamElements chat bot on the
+ * StevoTVR Twitch channel.
+ *
+ * @copyright (c) 2019, Steve Guidetti, https://github.com/stevotvr
+ * @license https://github.com/stevotvr/stevotvrbot/blob/master/LICENSE MIT License
+ */
+
 namespace StevoTVRBot\Model;
 
+/**
+ * Model representing the items database.
+ */
 class ItemsModel extends Model
 {
+	/**
+	 * Find an item for a user. This fetches a weighted random item/modifier
+	 * combination, calculates its value, and stores it in a user inventory.
+	 *
+	 * @param  string $user The username of the user finding the item
+	 *
+	 * @return array|boolean Array describing the found item, or false on
+	 *                       failure
+	 */
 	public static function find(string $user)
 	{
 		$itemId = $itemName = $itemValue = $modId = $modDesc = $modValue = null;
@@ -48,6 +68,16 @@ class ItemsModel extends Model
         return false;
  	}
 
+ 	/**
+ 	 * Sells an item for a user. This searches a user inventory for an item
+ 	 * matching the description and deletes it.
+ 	 *
+ 	 * @param  string $user The username of the user selling the item
+ 	 * @param  string $item The description of the item to sell
+ 	 *
+ 	 * @return array|boolean Array containing the user and value of the item
+ 	 *                       sold, or false on failure
+ 	 */
  	public static function sell(string $user, string $item)
  	{
         if ($stmt = self::db()->prepare("SELECT id, value FROM inventory WHERE user = ? AND description = ? LIMIT 1;"))
@@ -79,6 +109,15 @@ class ItemsModel extends Model
         return false;
  	}
 
+ 	/**
+ 	 * Get the inventory of found items.
+ 	 *
+ 	 * @param  string|null $user The user by which to limit the search, or null
+ 	 *                           to get all inventories
+ 	 *
+ 	 * @return array|boolean Array containing inventory data, or false on
+ 	 *                       failure
+ 	 */
  	public function getInventory(string $user = null)
  	{
  		$sql = "SELECT inventory.user, items.item, modifiers.description, inventory.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item LEFT JOIN modifiers ON modifiers.id = inventory.modifier ";

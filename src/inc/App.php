@@ -1,11 +1,25 @@
 <?php
 
+/**
+ * StevoTVRBot. Supplies a custom API for the StreamElements chat bot on the
+ * StevoTVR Twitch channel.
+ *
+ * @copyright (c) 2019, Steve Guidetti, https://github.com/stevotvr
+ * @license https://github.com/stevotvr/stevotvrbot/blob/master/LICENSE MIT License
+ */
+
 namespace StevoTVRBot;
 
 use StevoTVRBot\Page\Page;
 
+/**
+ * App entry point.
+ */
 class App
 {
+	/**
+	 * Run the application.
+	 */
 	public static function run()
 	{
     	$options = [

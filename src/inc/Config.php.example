@@ -1,12 +1,42 @@
 <?php
 
+/**
+ * StevoTVRBot. Supplies a custom API for the StreamElements chat bot on the
+ * StevoTVR Twitch channel.
+ *
+ * @copyright (c) 2019, Steve Guidetti, https://github.com/stevotvr
+ * @license https://github.com/stevotvr/stevotvrbot/blob/master/LICENSE MIT License
+ */
+
 namespace StevoTVRBot;
 
+/**
+ * App configuration.
+ */
 class Config
 {
+	/**
+	 * MySQL host.
+	 */
     const DBHOST = '';
+
+    /**
+     * MySQL user.
+     */
     const DBUSER = '';
+
+    /**
+     * MySQL user password.
+     */
     const DBPASS = '';
+
+    /**
+     * MySQL database name.
+     */
     const DBNAME = '';
+
+    /**
+     * The secret for API requests.
+     */
     const SECRET = '';
 }

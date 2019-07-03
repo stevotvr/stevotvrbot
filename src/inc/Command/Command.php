@@ -21,31 +21,19 @@ abstract class Command
 	public static function route()
 	{
 		$input = filter_input(INPUT_GET, 'input');
-		list($command, $args) = explode(' ', $input, 2);
+		list($command, $args) = explode(' ', ltrim($input, '!'), 2);
 
-		$object = null;
-
-		switch ($command)
+		$className = 'StevoTVRBot\\Command\\' . ucfirst(strtolower($command)) . 'Command';
+		if (class_exists($className))
 		{
-			case '!addtip':
-				$object = new AddtipCommand();
-				break;
-			case '!find':
-				$object = new FindCommand();
-				break;
-			case '!sell':
-				$object = new SellCommand();
-				break;
-			case '!tip':
-				$object = new TipCommand();
-				break;
-			default:
-		        header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-		        echo '404 Not Found';
-		        return;
+			$object = new $className();
+			$object->exec($args ?? '', self::getUser());
 		}
-
-		$object->exec($args ?? '', self::getUser());
+		else
+		{
+	        header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+	        echo '404 Not Found';
+		}
 	}
 
 	/**

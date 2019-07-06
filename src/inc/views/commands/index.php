@@ -1,4 +1,4 @@
-	<section id="commands">
+	<section class="main" id="commands">
 		<header>
 			<h2><a href="/commands">Chat Commands</a></h2>
 		</header>
@@ -7,7 +7,7 @@
 			<header>
 				<h3><?php echo $level['name']; ?></h3>
 			</header>
-			<table>
+			<table cellspacing="0">
 				<tr>
 					<th>Command</th>
 					<th>Description</th>

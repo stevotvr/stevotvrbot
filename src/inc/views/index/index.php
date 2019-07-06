@@ -1,4 +1,4 @@
-	<section id="index">
+	<section class="main" id="index">
 		<header>
 			<h2><a href="/">Welcome</a></h2>
 		</header>

@@ -38,6 +38,14 @@ section {
 	margin: 10px;
 }
 
+table {
+	width: 100%;
+}
+
+td {
+	padding: 6px;
+}
+
 #site-nav {
 	background: #090015;
 	display: block;
@@ -67,7 +75,7 @@ section {
 	padding: 10px;
 }
 
-#inventory .user {
+.main > section {
 	background: #1A0A2D;
 	border: 2px solid #DDD;
 	border-radius: 6px;
@@ -75,23 +83,31 @@ section {
 	padding: 6px;
 }
 
-#inventory .user footer {
+.main > section footer {
 	clear: both;
 }
 
-#inventory .user ul {
+#commands th:first-child {
+	width: 300px;
+}
+
+#commands tr:nth-child(even) td {
+	background: #0E001D;
+}
+
+#inventory ul {
 	margin-top: 6px;
 	padding: 0px;
 }
 
-#inventory .user h3 {
+#inventory h3 {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	width: 190px;
 }
 
-#inventory .user li {
+#inventory li {
 	background: #0E001D;
 	border: 2px solid #CCC;
 	border-radius: 4px;

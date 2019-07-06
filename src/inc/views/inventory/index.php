@@ -1,10 +1,10 @@
-	<section id="inventory">
+	<section class="main" id="inventory">
 		<header>
 			<h2><a href="/inventory">Inventory</a> - <?php echo $user; ?></h2>
 		</header>
 <?php if (!empty($inventory)): ?>
 <?php foreach ($inventory as $name => $user): ?>
-		<section class="user">
+		<section>
 			<header>
 				<h3><?php echo $name; ?></h3>
 			</header>
@@ -33,7 +33,7 @@
 		</section>
 <?php endforeach; ?>
 <?php else: ?>
-		<section class="user">
+		<section>
 			<p>No items found.</p>
 		</section>
 <?php endif; ?>

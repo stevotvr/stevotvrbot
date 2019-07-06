@@ -18,25 +18,35 @@ class Config
 	/**
 	 * MySQL host.
 	 */
-    const DBHOST = '';
+	const DBHOST = '';
+
+	/**
+	 * MySQL user.
+	 */
+	const DBUSER = '';
+
+	/**
+	 * MySQL user password.
+	 */
+	const DBPASS = '';
+
+	/**
+	 * MySQL database name.
+	 */
+	const DBNAME = '';
+
+	/**
+	 * The secret for API requests.
+	 */
+	const SECRET = '';
 
     /**
-     * MySQL user.
+     * The StreamElements channel ID.
      */
-    const DBUSER = '';
+    const SE_CHANNEL_ID = '';
 
-    /**
-     * MySQL user password.
-     */
-    const DBPASS = '';
-
-    /**
-     * MySQL database name.
-     */
-    const DBNAME = '';
-
-    /**
-     * The secret for API requests.
-     */
-    const SECRET = '';
+	/**
+	 * The JWT token for authorizing StreamElements requests.
+	 */
+	const SE_JWT_TOKEN = '';
 }

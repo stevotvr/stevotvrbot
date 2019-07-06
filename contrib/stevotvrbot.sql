@@ -35,6 +35,11 @@ CREATE TABLE `modifiers` (
   `weight` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `settings` (
+  `setting` varchar(32) NOT NULL,
+  `value` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `tips` (
   `id` int(11) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -62,6 +67,9 @@ ALTER TABLE `items`
 ALTER TABLE `modifiers`
   ADD PRIMARY KEY (`id`),
   ADD KEY `weight` (`weight`);
+
+ALTER TABLE `settings`
+  ADD PRIMARY KEY (`setting`);
 
 ALTER TABLE `tips`
   ADD PRIMARY KEY (`id`),

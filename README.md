@@ -6,13 +6,17 @@ This application lives on my server to supply a custom API for the [StreamElemen
 
 The configuration for the application is found in the src/inc/Config.php file (rename Config.php.example if installing fresh).
 
-| Option   | Description                                                       |
-| -------- | ----------------------------------------------------------------- |
-| `DBHOST` | The hostname of the MySQL database server                         |
-| `DBUSER` | The name of the user to use for accessing the MySQL database      |
-| `DBPASS` | The password for the user to use for accessing the MySQL database |
-| `DBNAME` | The name of the MySQL database                                    |
-| `SECRET` | The secret string required by API requests                        |
+| Option          | Description                                                       |
+| --------------- | ----------------------------------------------------------------- |
+| `DBHOST`        | The hostname of the MySQL database server                         |
+| `DBUSER`        | The name of the user to use for accessing the MySQL database      |
+| `DBPASS`        | The password for the user to use for accessing the MySQL database |
+| `DBNAME`        | The name of the MySQL database                                    |
+| `SECRET`        | The secret string required by API requests                        |
+| `SE_CHANNEL_ID` | Your StreamElements channel ID*                                   |
+| `SE_JWT_TOKEN`  | The JWT token for your StreamElements channel*                    |
+
+\* You can find your StreamElements channel ID (**Account ID**) and **JWT Token** from your [StreamElements channels page](https://streamelements.com/dashboard/account/channels) (enable "Show secrets").
 
 ## Implementation
 

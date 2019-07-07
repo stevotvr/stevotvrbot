@@ -21,13 +21,20 @@ abstract class Command
 	public static function route()
 	{
 		$input = filter_input(INPUT_GET, 'input');
-		list($command, $args) = explode(' ', ltrim($input, '!'), 2);
+		$input = explode(' ', ltrim($input, '!'), 2);
 
-		$className = 'StevoTVRBot\\Command\\' . ucfirst(strtolower($command)) . 'Command';
+		if (empty($input[0]))
+		{
+	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+	        echo '400 Bad Request';
+	        return;
+		}
+
+		$className = 'StevoTVRBot\\Command\\' . ucfirst(strtolower($input[0])) . 'Command';
 		if (class_exists($className))
 		{
 			$object = new $className();
-			$object->exec($args ?? '', self::getUser());
+			$object->exec($input[1] ?? '', self::getUser());
 		}
 		else
 		{

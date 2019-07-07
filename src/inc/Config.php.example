@@ -35,6 +35,11 @@ class Config
 	 */
 	const DBNAME = '';
 
+    /**
+     * The time zone to use.
+     */
+    const TIMEZONE = '';
+
 	/**
 	 * The secret for API requests.
 	 */

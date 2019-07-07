@@ -42,7 +42,15 @@ table {
 	width: 100%;
 }
 
-td {
+tr:nth-child(even) td {
+	background: #0E001D;
+}
+
+th {
+	text-align: left;
+}
+
+th, td {
 	padding: 6px;
 }
 
@@ -87,12 +95,16 @@ td {
 	clear: both;
 }
 
-#commands th:first-child {
-	width: 300px;
+#schedule th {
+	width: 100px;
 }
 
-#commands tr:nth-child(even) td {
-	background: #0E001D;
+#schedule th:last-child {
+	width: auto;
+}
+
+#commands th:first-child {
+	width: 300px;
 }
 
 #inventory ul {

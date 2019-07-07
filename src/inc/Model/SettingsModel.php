@@ -88,4 +88,61 @@ class SettingsModel extends Model
 
         return false;
  	}
+
+	/**
+	 * Get the name of the StreamElements loyalty points.
+	 *
+	 * @return string The name of the StreamElements loyalty points
+	 */
+	public static function getPointsName()
+	{
+		$points_name = null;
+
+		try
+		{
+			$points_name = self::get('se_points_name');
+			$last_update = self::get('se_points_last_update');
+			if (!isset($last_update) || (time() - $last_update > 120))
+			{
+				$ctx = stream_context_create([
+					'http'	=> [
+						'ignore_errors'	=> '1',
+						'method'		=> 'GET',
+						'header'		=> [
+							'Accept: application/json',
+							'Content-Type: Content-Type',
+							'Authorization: Bearer ' . Config::SE_JWT_TOKEN,
+						],
+					],
+				]);
+				$url = sprintf('https://api.streamelements.com/kappa/v2/loyalty/%s', Config::SE_CHANNEL_ID);
+				$stream = @fopen($url, 'r', false, $ctx);
+				if ($stream)
+				{
+					$meta = stream_get_meta_data($stream);
+					$status = array_shift($meta['wrapper_data']);
+					$response_code = (int) substr($status, strpos($status, ' ') + 1, 3);
+					$result = stream_get_contents($stream);
+					fclose($stream);
+
+					if ($response_code === 200)
+					{
+						$data = json_decode($result, true);
+						if (is_array($data) && isset($data['loyalty'], $data['loyalty']['name']))
+						{
+							$points_name = $data['loyalty']['name'];
+							self::set('se_points_name', $points_name);
+						}
+					}
+
+					self::set('se_points_last_update', time());
+				}
+			}
+		}
+		catch (\Exception $e)
+		{
+		}
+
+		return $points_name ?? 'points';
+	}
 }

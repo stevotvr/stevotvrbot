@@ -12,6 +12,7 @@ namespace StevoTVRBot\Command;
 
 use StevoTVRBot\Config;
 use StevoTVRBot\Model\ItemsModel;
+use StevoTVRBot\Model\SettingsModel;
 
 /**
  * Handler for the !sell command. This command takes an item description as
@@ -47,7 +48,7 @@ class SellCommand extends Command
  		{
  			if ($this->addUserPoints($user, $sold['value']))
  			{
-		    	printf('%s sold %s for $%d', $sold['user'], $args, $sold['value']);
+		    	printf('%s sold %s for %d %s', $sold['user'], $args, $sold['value'], SettingsModel::getPointsName());
  			}
  			else
  			{

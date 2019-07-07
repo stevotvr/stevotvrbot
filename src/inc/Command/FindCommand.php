@@ -11,6 +11,7 @@
 namespace StevoTVRBot\Command;
 
 use StevoTVRBot\Model\ItemsModel;
+use StevoTVRBot\Model\SettingsModel;
 
 /**
  * Handler for the !find command. This command finds a weighted random
@@ -37,7 +38,7 @@ class FindCommand extends Command
  		$item = ItemsModel::find($user);
  		if ($item)
  		{
-	        printf('%s found %s worth $%d', $item['user'], $item['description'], $item['value']);
+	        printf('%s found %s worth %d %s', $item['user'], $item['description'], $item['value'], SettingsModel::getPointsName());
  		}
  		else
  		{

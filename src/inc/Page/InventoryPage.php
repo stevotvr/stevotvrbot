@@ -11,6 +11,7 @@
 namespace StevoTVRBot\Page;
 
 use StevoTVRBot\Model\ItemsModel;
+use StevoTVRBot\Model\SettingsModel;
 
 /**
  * Handler for the inventory page, which displays items in user inventories.
@@ -23,8 +24,9 @@ class InventoryPage extends Page
     public function run(array $params)
     {
     	$data = [
-    		'inventory'	=> [],
-    		'user'		=> htmlspecialchars($params[0] ?? 'All Users'),
+    		'pointsName'	=> htmlspecialchars(SettingsModel::getPointsName()),
+    		'inventory'		=> [],
+    		'user'			=> htmlspecialchars($params[0] ?? 'All Users'),
     	];
 
     	$inventory = ItemsModel::getInventory($params[0]);

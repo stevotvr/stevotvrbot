@@ -17,7 +17,7 @@
 						<dt>Status:</dt>
 						<dd><?php echo $item['modifier']; ?></dd><br>
 						<dt>Value:</dt>
-						<dd>$<?php echo $item['value']; ?></dd><br>
+						<dd><?php echo $item['value']; ?> <?php echo $pointsName; ?></dd><br>
 						<dt>Quantity:</dt>
 						<dd><?php echo $item['quantity']; ?></dd>
 					</dl>

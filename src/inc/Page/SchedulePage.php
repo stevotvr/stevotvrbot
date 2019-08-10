@@ -11,6 +11,7 @@
 namespace StevoTVRBot\Page;
 
 use StevoTVRBot\Config;
+use StevoTVRBot\Model\SettingsModel;
 use StevoTVRBot\Model\ScheduleModel;
 
 /**
@@ -23,20 +24,40 @@ class SchedulePage extends Page
 	 */
     public function run(array $params)
     {
+		$schedule = ScheduleModel::get();
+		$singleGame = SettingsModel::get('schedule_single_game') === '1';
+
     	if (filter_input(INPUT_GET, 'json'))
     	{
 	        header('Access-Control-Allow-Origin: *');
-	        echo json_encode(ScheduleModel::get() ?? []);
+
+            if ($singleGame)
+            {
+            	$game = SettingsModel::get('schedule_game');
+            	$platform = SettingsModel::get('schedule_platform');
+            	foreach ($schedule as &$item)
+            	{
+            		$item['game'] = $game;
+            		$item['platform'] = $platform;
+            	}
+            }
+
+	        echo json_encode($schedule ?? []);
     	}
     	else
     	{
-    		$schedule = ScheduleModel::get();
 
     		if (is_array($schedule))
     		{
     			$data = [
-    				'schedule'	=> [],
+    				'singleGame'	=> $singleGame,
+    				'schedule'		=> [],
     			];
+
+    			if ($singleGame)
+    			{
+    				$data['game'] = htmlspecialchars(sprintf('%s (%s)', SettingsModel::get('schedule_game'), SettingsModel::get('schedule_platform')));;
+    			}
 
     			$days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     			$dt = new \DateTime('now', new \DateTimeZone(Config::TIMEZONE));

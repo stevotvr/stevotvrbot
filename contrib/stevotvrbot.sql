@@ -3,6 +3,12 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+
 CREATE TABLE `commands` (
   `id` int(11) NOT NULL,
   `command` varchar(64) NOT NULL,
@@ -14,7 +20,6 @@ CREATE TABLE `commands` (
 CREATE TABLE `inventory` (
   `id` int(11) NOT NULL,
   `user` varchar(32) NOT NULL,
-  `modifier` int(11) NOT NULL,
   `item` int(11) NOT NULL,
   `value` int(11) NOT NULL,
   `description` varchar(128) NOT NULL,
@@ -28,11 +33,15 @@ CREATE TABLE `items` (
   `weight` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `modifiers` (
+CREATE TABLE `schedule` (
   `id` int(11) NOT NULL,
-  `description` varchar(64) NOT NULL,
-  `value` int(11) NOT NULL,
-  `weight` int(11) NOT NULL
+  `day` int(11) NOT NULL,
+  `hour` int(11) NOT NULL,
+  `minute` int(11) NOT NULL,
+  `length` int(11) NOT NULL,
+  `game` text NOT NULL,
+  `platform` text NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `settings` (
@@ -56,7 +65,6 @@ ALTER TABLE `commands`
 ALTER TABLE `inventory`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user` (`user`),
-  ADD KEY `modifier` (`modifier`),
   ADD KEY `item` (`item`),
   ADD KEY `description` (`description`);
 
@@ -64,9 +72,8 @@ ALTER TABLE `items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `weight` (`weight`);
 
-ALTER TABLE `modifiers`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `weight` (`weight`);
+ALTER TABLE `schedule`
+  ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `settings`
   ADD PRIMARY KEY (`setting`);
@@ -87,9 +94,13 @@ ALTER TABLE `inventory`
 ALTER TABLE `items`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
-ALTER TABLE `modifiers`
+ALTER TABLE `schedule`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `tips`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

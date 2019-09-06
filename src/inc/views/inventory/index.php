@@ -14,8 +14,6 @@
 					<h4><?php echo $item['item']; ?></h4>
 					</header>
 					<dl>
-						<dt>Status:</dt>
-						<dd><?php echo $item['modifier']; ?></dd><br>
 						<dt>Value:</dt>
 						<dd><?php echo $item['value']; ?> <?php echo $pointsName; ?></dd><br>
 						<dt>Quantity:</dt>

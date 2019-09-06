@@ -46,7 +46,6 @@ class InventoryPage extends Page
 
     			$data['inventory'][$item['user']]['items'][] = [
     				'item'		=> htmlspecialchars($item['item']),
-    				'modifier'	=> htmlspecialchars($item['modifier']),
     				'quantity'	=> $item['quantity'],
     				'value'		=> $item['value'],
     			];

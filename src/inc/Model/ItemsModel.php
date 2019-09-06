@@ -26,7 +26,7 @@ class ItemsModel extends Model
 	 */
 	public static function find(string $user)
 	{
-		$itemId = $itemName = $itemValue = $modId = $modDesc = $modValue = null;
+		$itemId = $itemName = $itemValue = null;
 
         if ($stmt = self::db()->prepare("SELECT id, item, value FROM items ORDER BY -LOG(RAND()) / weight LIMIT 1;"))
         {
@@ -36,32 +36,21 @@ class ItemsModel extends Model
             $stmt->close();
         }
 
-        if ($stmt = self::db()->prepare("SELECT id, description, value FROM modifiers ORDER BY -LOG(RAND()) / weight LIMIT 1;"))
-        {
-            $stmt->execute();
-            $stmt->bind_result($modId, $modDesc, $modValue);
-            $stmt->fetch();
-            $stmt->close();
-        }
-
-        if (!$itemId || !$modId)
+        if (!$itemId)
         {
         	return false;
         }
 
-        $description = $modDesc . ' ' . $itemName;
-        $value = ($modValue / 100) * $itemValue;
-
-        if ($stmt = self::db()->prepare("INSERT INTO inventory (user, modifier, item, value, description) VALUES (?, ?, ?, ?, ?);"))
+        if ($stmt = self::db()->prepare("INSERT INTO inventory (user, item, value, description) VALUES (?, ?, ?, ?);"))
         {
-            $stmt->bind_param('siiis', $user, $modId, $itemId, $value, $description);
+            $stmt->bind_param('siis', $user, $itemId, $itemValue, $itemName);
             $stmt->execute();
             $stmt->close();
 
             return [
             	'user'			=> $user,
-            	'description'	=> $description,
-            	'value'			=> $value,
+            	'description'	=> $itemName,
+            	'value'			=> $itemValue,
             ];
         }
 
@@ -120,12 +109,12 @@ class ItemsModel extends Model
  	 */
  	public function getInventory(string $user = null)
  	{
- 		$sql = "SELECT inventory.user, items.item, modifiers.description, inventory.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item LEFT JOIN modifiers ON modifiers.id = inventory.modifier ";
+ 		$sql = "SELECT inventory.user, items.item, inventory.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item ";
  		if ($user)
  		{
  			$sql .= "WHERE inventory.user = ? ";
  		}
- 		$sql .= "GROUP BY inventory.user, items.item, modifiers.description, inventory.value ORDER BY inventory.user ASC, items.item ASC;";
+ 		$sql .= "GROUP BY inventory.user, items.item, inventory.value ORDER BY inventory.user ASC, items.item ASC;";
 
  		if ($stmt = self::db()->prepare($sql))
  		{
@@ -136,14 +125,13 @@ class ItemsModel extends Model
 	 			$stmt->bind_param('s', $user);
 	 		}
  			$stmt->execute();
- 			$stmt->bind_result($user, $item, $modifier, $value, $quantity);
+ 			$stmt->bind_result($user, $item, $value, $quantity);
 
  			while ($stmt->fetch())
  			{
  				$inventory[] = [
  					'user'		=> $user,
  					'item'		=> $item,
- 					'modifier'	=> $modifier,
  					'quantity'	=> $quantity,
  					'value'		=> $value,
  				];

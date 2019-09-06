@@ -28,7 +28,7 @@ class ItemsModel extends Model
 	{
 		$itemId = $itemName = $itemValue = null;
 
-        if ($stmt = self::db()->prepare("SELECT id, item, value FROM items ORDER BY -LOG(RAND()) / weight LIMIT 1;"))
+        if ($stmt = self::db()->prepare("SELECT id, item, value FROM items WHERE weight > 0 ORDER BY -LOG(RAND()) / weight LIMIT 1;"))
         {
             $stmt->execute();
             $stmt->bind_result($itemId, $itemName, $itemValue);
@@ -41,9 +41,9 @@ class ItemsModel extends Model
         	return false;
         }
 
-        if ($stmt = self::db()->prepare("INSERT INTO inventory (user, item, value, description) VALUES (?, ?, ?, ?);"))
+        if ($stmt = self::db()->prepare("INSERT INTO inventory (user, item) VALUES (?, ?);"))
         {
-            $stmt->bind_param('siis', $user, $itemId, $itemValue, $itemName);
+            $stmt->bind_param('si', $user, $itemId);
             $stmt->execute();
             $stmt->close();
 
@@ -69,7 +69,7 @@ class ItemsModel extends Model
  	 */
  	public static function sell(string $user, string $item)
  	{
-        if ($stmt = self::db()->prepare("SELECT id, value FROM inventory WHERE user = ? AND description = ? LIMIT 1;"))
+        if ($stmt = self::db()->prepare("SELECT inventory.id, items.value FROM inventory LEFT JOIN items ON items.id = inventory.item WHERE inventory.user = ? AND items.item = ? LIMIT 1;"))
         {
             $stmt->bind_param('ss', $user, $item);
             $stmt->execute();
@@ -109,12 +109,12 @@ class ItemsModel extends Model
  	 */
  	public function getInventory(string $user = null)
  	{
- 		$sql = "SELECT inventory.user, items.item, inventory.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item ";
+ 		$sql = "SELECT inventory.user, items.item, items.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item ";
  		if ($user)
  		{
  			$sql .= "WHERE inventory.user = ? ";
  		}
- 		$sql .= "GROUP BY inventory.user, items.item, inventory.value ORDER BY inventory.user ASC, items.item ASC;";
+ 		$sql .= "GROUP BY inventory.user, items.item, items.value ORDER BY inventory.user ASC, items.item ASC;";
 
  		if ($stmt = self::db()->prepare($sql))
  		{

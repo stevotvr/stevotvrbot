@@ -21,8 +21,6 @@ CREATE TABLE `inventory` (
   `id` int(11) NOT NULL,
   `user` varchar(32) NOT NULL,
   `item` int(11) NOT NULL,
-  `value` int(11) NOT NULL,
-  `description` varchar(128) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -65,11 +63,11 @@ ALTER TABLE `commands`
 ALTER TABLE `inventory`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user` (`user`),
-  ADD KEY `item` (`item`),
-  ADD KEY `description` (`description`);
+  ADD KEY `item` (`item`);
 
 ALTER TABLE `items`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `item` (`item`),
   ADD KEY `weight` (`weight`);
 
 ALTER TABLE `schedule`

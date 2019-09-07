@@ -107,7 +107,7 @@ class ItemsModel extends Model
  	 * @return array|boolean Array containing inventory data, or false on
  	 *                       failure
  	 */
- 	public function getInventory(string $user = null)
+ 	public static function getInventory(string $user = null)
  	{
  		$sql = "SELECT inventory.user, items.item, items.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item ";
  		if ($user)

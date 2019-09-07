@@ -33,7 +33,7 @@ class SettingsModel extends Model
  	 *
  	 * @throws \Exception The settings could not be loaded
  	 */
- 	public function get(string $key)
+ 	public static function get(string $key)
  	{
  		if (!is_array(self::$settings))
  		{
@@ -70,7 +70,7 @@ class SettingsModel extends Model
  	 *
  	 * @return boolean True on success, otherwise false
  	 */
- 	public function set(string $key, $value)
+ 	public static function set(string $key, $value)
  	{
         if ($stmt = self::db()->prepare("INSERT INTO settings (setting, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = ?;"))
         {

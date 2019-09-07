@@ -21,7 +21,7 @@ class CommandsModel extends Model
  	 * @return array|boolean Array containing chat command data, or false on
  	 *                       failure
  	 */
- 	public function getCommands()
+ 	public static function getCommands()
  	{
  		if ($stmt = self::db()->prepare("SELECT command, arguments, description, level FROM commands ORDER BY command ASC;"))
  		{

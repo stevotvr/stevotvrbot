@@ -16,14 +16,6 @@ namespace StevoTVRBot\Model;
 class ItemsModel extends Model
 {
 	/**
-	 * Crafting errors
-	 */
-	const CRAFTING_SUCCESS = 0;
-	const RECIPE_NOT_FOUND = 1;
-	const MISSING_INGREDIENTS = 2;
-	const DATABASE_ERROR = 3;
-
-	/**
 	 * Find an item for a user. This fetches a weighted random item/modifier
 	 * combination, calculates its value, and stores it in a user inventory.
 	 *
@@ -49,8 +41,12 @@ class ItemsModel extends Model
 			return false;
 		}
 
-		if (self::giveItem($user, $itemId))
+		if ($stmt = self::db()->prepare("INSERT INTO inventory (user, item) VALUES (?, ?);"))
 		{
+			$stmt->bind_param('si', $user, $itemId);
+			$stmt->execute();
+			$stmt->close();
+
 			return [
 				'user'			=> $user,
 				'description'	=> $itemName,
@@ -104,17 +100,13 @@ class ItemsModel extends Model
 	}
 
 	/**
-	 * Crafts an item for a user. This finds the recipe for the requested item
-	 * if it exists, checks that the user has the required items in their
-	 * inventory, and then converts the ingredients into the requested item in
-	 * the user's inventory.
+	 * Gets a crafting recipe for the requested item.
 	 *
-	 * @param string $user The username of the user crafting the item
-	 * @param string $item The name of the item to craft
+	 * @param string $item The name of the requested item
 	 *
-	 * @return int The error code constant
+	 * @return array|boolean The ingredients or false if one doesn't exist
 	 */
-	public static function craft(string $user, string $item)
+	public static function getRecipe(string $item)
 	{
 		$itemId = $itemName = $recipe = null;
 
@@ -129,49 +121,29 @@ class ItemsModel extends Model
 
 		if (!$itemId)
 		{
-			return self::RECIPE_NOT_FOUND;
+			return false;
 		}
 
-		$ingredients = json_decode($recipe, true);
-		if (!$ingredients)
-		{
-			return self::RECIPE_NOT_FOUND;
-		}
+		return json_decode($recipe, true);
+	}
 
-		$inventory = self::getInventory($user);
-		if (!$inventory)
-		{
-			return self::DATABASE_ERROR;
-		}
-
-		$userItems = [];
-		foreach ($inventory as $item)
-		{
-			$userItems[$item['itemId']] = $item['quantity'];
-		}
-
-		foreach ($ingredients as $item => $quantity)
-		{
-			if (!isset($userItems[$item]) || $userItems[$item] < $quantity)
-			{
-				return self::MISSING_INGREDIENTS;
-			}
-		}
-
+	/**
+	 * Removes items from a user's inventory.
+	 *
+	 * @param string $user  The username of the user
+	 * @param array  $items The items to remove
+	 */
+	public static function takeItems(string $user, array $items)
+	{
 		if ($stmt = self::db()->prepare("DELETE FROM inventory WHERE user = ? AND item = ? ORDER BY time ASC LIMIT ?;"))
 		{
-			foreach ($ingredients as $item => $quantity)
+			foreach ($items as $item => $quantity)
 			{
 				$stmt->bind_param('sii', $user, $item, $quantity);
 				$stmt->execute();
 			}
 
 			$stmt->close();
-
-			if (self::giveItem($user, $itemId))
-			{
-				return self::CRAFTING_SUCCESS;
-			}
 		}
 	}
 
@@ -245,16 +217,16 @@ class ItemsModel extends Model
 	/**
 	 * Give an item to a user.
 	 *
-	 * @param string $user   The username of the user to receive the item
-	 * @param int    $itemId The ID of the item to give
+	 * @param string $user The username of the user to receive the item
+	 * @param string $item The name of the item to give
 	 *
 	 * @return boolean True on success, false on failure
 	 */
-	protected static function giveItem(string $user, int $itemId)
+	public static function giveItem(string $user, string $item)
 	{
-		if ($stmt = self::db()->prepare("INSERT INTO inventory (user, item) VALUES (?, ?);"))
+		if ($stmt = self::db()->prepare("INSERT INTO inventory (user, item) VALUES (?, (SELECT id FROM items WHERE item = ?));"))
 		{
-			$stmt->bind_param('si', $user, $itemId);
+			$stmt->bind_param('ss', $user, $item);
 			$stmt->execute();
 			$stmt->close();
 

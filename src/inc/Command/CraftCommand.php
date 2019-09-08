@@ -42,20 +42,40 @@ class CraftCommand extends Command
 			return;
 		}
 
-		switch (ItemsModel::craft($user, $args))
+		$ingredients = ItemsModel::getRecipe($args);
+		if (!is_array($ingredients))
 		{
-			case ItemsModel::CRAFTING_SUCCESS:
-				printf('%s crafted %s', $user, $args);
-				break;
-			case ItemsModel::RECIPE_NOT_FOUND:
-				printf('%s cannot be crafted', $args);
-				break;
-			case ItemsModel::MISSING_INGREDIENTS:
+			printf('%s cannot be crafted', $args);
+			return;
+		}
+
+		$inventory = ItemsModel::getInventory($user);
+		if (!is_array($inventory))
+		{
+			header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+			echo '503 Service Unavailable';
+			return;
+		}
+
+		$userItems = [];
+		foreach ($inventory as $item)
+		{
+			$userItems[$item['itemId']] = $item['quantity'];
+		}
+
+		foreach ($ingredients as $item => $quantity)
+		{
+			if (!isset($userItems[$item]) || $userItems[$item] < $quantity)
+			{
 				printf('%s, you do not have all of the required ingredients to craft %s', $user, $args);
-				break;
-			default:
-				header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-				echo '503 Service Unavailable';
+				return;
+			}
+		}
+
+		ItemsModel::takeItems($user, $ingredients);
+		if (ItemsModel::giveItem($user, $args))
+		{
+			printf('%s crafted %s', $user, $args);
 		}
 	}
 }

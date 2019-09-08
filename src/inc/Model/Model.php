@@ -29,13 +29,13 @@ abstract class Model
 	 *
 	 * @return \mysqli
 	 */
-    protected static function db(): \mysqli
-    {
-        if (!self::$db)
-        {
-            self::$db = new \mysqli(Config::DBHOST, Config::DBUSER, Config::DBPASS, Config::DBNAME);
-        }
+	protected static function db(): \mysqli
+	{
+		if (!self::$db)
+		{
+			self::$db = new \mysqli(Config::DBHOST, Config::DBUSER, Config::DBPASS, Config::DBNAME);
+		}
 
-        return self::$db;
-    }
+		return self::$db;
+	}
 }

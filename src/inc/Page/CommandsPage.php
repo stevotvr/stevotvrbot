@@ -20,33 +20,33 @@ class CommandsPage extends Page
 	/**
 	 * @inheritDoc
 	 */
-    public function run(array $params)
-    {
-        $data = [
-        	'commands'	=> [
-        		[
-        			'name'		=> 'Public',
-        			'commands'	=> [],
-        		],
-        		[
-        			'name'		=> 'Subscriber',
-        			'commands'	=> [],
-        		],
-        	],
-        ];
+	public function run(array $params)
+	{
+		$data = [
+			'commands'	=> [
+				[
+					'name'		=> 'Public',
+					'commands'	=> [],
+				],
+				[
+					'name'		=> 'Subscriber',
+					'commands'	=> [],
+				],
+			],
+		];
 
-        $commands = CommandsModel::getCommands();
-        if (is_array($commands))
-        {
-        	foreach ($commands as $command)
-        	{
-        		$data['commands'][$command['level']]['commands'][] = [
-        			'name'			=> htmlspecialchars($command['command'] . ' ' . $command['arguments']),
-        			'description'	=> htmlspecialchars($command['description']),
-        		];
-        	}
+		$commands = CommandsModel::getCommands();
+		if (is_array($commands))
+		{
+			foreach ($commands as $command)
+			{
+				$data['commands'][$command['level']]['commands'][] = [
+					'name'			=> htmlspecialchars($command['command'] . ' ' . $command['arguments']),
+					'description'	=> htmlspecialchars($command['description']),
+				];
+			}
 
-        	$this->showTemplate('commands', $data);
-        }
-    }
+			$this->showTemplate('commands', $data);
+		}
+	}
 }

@@ -29,33 +29,33 @@ class CraftCommand extends Command
 	 */
 	protected function exec(string $args, string $user = null)
 	{
- 		if (!$user)
- 		{
-	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-	        echo '400 Bad Request';
- 			return;
- 		}
+		if (!$user)
+		{
+			header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+			echo '400 Bad Request';
+			return;
+		}
 
- 		if (!$args)
- 		{
-	        echo 'Usage: !craft <item>';
- 			return;
- 		}
+		if (!$args)
+		{
+			echo 'Usage: !craft <item>';
+			return;
+		}
 
- 		switch (ItemsModel::craft($user, $args))
- 		{
- 			case ItemsModel::CRAFTING_SUCCESS:
-	 			printf('%s crafted %s', $user, $args);
-	 			break;
-	 		case ItemsModel::RECIPE_NOT_FOUND:
-	 			printf('%s cannot be crafted', $args);
-	 			break;
-	 		case ItemsModel::MISSING_INGREDIENTS:
-	 			printf('%s, you do not have all of the required ingredients to craft %s', $user, $args);
-	 			break;
-	 		default:
-		        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-		        echo '503 Service Unavailable';
-  		}
+		switch (ItemsModel::craft($user, $args))
+		{
+			case ItemsModel::CRAFTING_SUCCESS:
+				printf('%s crafted %s', $user, $args);
+				break;
+			case ItemsModel::RECIPE_NOT_FOUND:
+				printf('%s cannot be crafted', $args);
+				break;
+			case ItemsModel::MISSING_INGREDIENTS:
+				printf('%s, you do not have all of the required ingredients to craft %s', $user, $args);
+				break;
+			default:
+				header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+				echo '503 Service Unavailable';
+		}
 	}
 }

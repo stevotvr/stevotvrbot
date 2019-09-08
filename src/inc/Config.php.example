@@ -35,20 +35,20 @@ class Config
 	 */
 	const DBNAME = '';
 
-    /**
-     * The time zone to use.
-     */
-    const TIMEZONE = '';
+	/**
+	 * The time zone to use.
+	 */
+	const TIMEZONE = '';
 
 	/**
 	 * The secret for API requests.
 	 */
 	const SECRET = '';
 
-    /**
-     * The StreamElements channel ID.
-     */
-    const SE_CHANNEL_ID = '';
+	/**
+	 * The StreamElements channel ID.
+	 */
+	const SE_CHANNEL_ID = '';
 
 	/**
 	 * The JWT token for authorizing StreamElements requests.

@@ -30,37 +30,37 @@ class SellCommand extends Command
 	 */
 	protected function exec(string $args, string $user = null)
 	{
- 		if (!$user)
- 		{
-	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-	        echo '400 Bad Request';
- 			return;
- 		}
+		if (!$user)
+		{
+			header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+			echo '400 Bad Request';
+			return;
+		}
 
- 		if (!$args)
- 		{
-	        echo 'Usage: !sell <item>';
- 			return;
- 		}
+		if (!$args)
+		{
+			echo 'Usage: !sell <item>';
+			return;
+		}
 
- 		$sold = ItemsModel::sell($user, $args);
- 		if ($sold)
- 		{
- 			if ($this->addUserPoints($user, $sold['value']))
- 			{
- 				ItemsModel::addToStore($sold['itemId']);
-		    	printf('%s sold %s for %d %s', $sold['user'], $args, $sold['value'], SettingsModel::getPointsName());
- 			}
- 			else
- 			{
-		        header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-		        echo '503 Service Unavailable';
- 			}
- 		}
- 		else
- 		{
-            printf('%s, that item could not be found in your inventory.', $user);
- 		}
+		$sold = ItemsModel::sell($user, $args);
+		if ($sold)
+		{
+			if ($this->addUserPoints($user, $sold['value']))
+			{
+				ItemsModel::addToStore($sold['itemId']);
+				printf('%s sold %s for %d %s', $sold['user'], $args, $sold['value'], SettingsModel::getPointsName());
+			}
+			else
+			{
+				header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+				echo '503 Service Unavailable';
+			}
+		}
+		else
+		{
+			printf('%s, that item could not be found in your inventory.', $user);
+		}
 	}
 
 	/**

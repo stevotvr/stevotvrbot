@@ -22,15 +22,15 @@ class BotPage extends Page
 	/**
 	 * @inheritDoc
 	 */
-    public function run(array $params)
-    {
-        if (filter_input(INPUT_GET, 'secret') !== Config::SECRET)
-        {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 401 Unauthorized');
-            echo '401 Unauthorized';
-            return;
-        }
+	public function run(array $params)
+	{
+		if (filter_input(INPUT_GET, 'secret') !== Config::SECRET)
+		{
+			header($_SERVER['SERVER_PROTOCOL'] . ' 401 Unauthorized');
+			echo '401 Unauthorized';
+			return;
+		}
 
-        Command::route();
-    }
+		Command::route();
+	}
 }

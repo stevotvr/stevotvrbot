@@ -32,8 +32,8 @@ abstract class Page
 		}
 		else
 		{
-	        header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-	        echo '404 Not Found';
+			header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+			echo '404 Not Found';
 		}
 	}
 
@@ -42,20 +42,20 @@ abstract class Page
 	 *
 	 * @param string[] $params The list of parameters
 	 */
-    protected abstract function run(array $params);
+	protected abstract function run(array $params);
 
-    /**
-     * Show a template.
-     *
-     * @param string $template The name of the template
-     * @param array  $data     The data with which to populate the template
-     */
-    protected final function showTemplate(string $template, array $data = array())
-    {
-    	$dir = __DIR__ . '/../views/';
-    	extract($data);
-    	require $dir . 'header.php';
-    	require $dir . $template . '/index.php';
-    	require $dir . 'footer.php';
-    }
+	/**
+	 * Show a template.
+	 *
+	 * @param string $template The name of the template
+	 * @param array  $data     The data with which to populate the template
+	 */
+	protected final function showTemplate(string $template, array $data = array())
+	{
+		$dir = __DIR__ . '/../views/';
+		extract($data);
+		require $dir . 'header.php';
+		require $dir . $template . '/index.php';
+		require $dir . 'footer.php';
+	}
 }

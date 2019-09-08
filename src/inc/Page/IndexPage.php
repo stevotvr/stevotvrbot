@@ -20,8 +20,8 @@ class IndexPage extends Page
 	/**
 	 * @inheritDoc
 	 */
-    public function run(array $params)
-    {
-        $this->showTemplate('index');
-    }
+	public function run(array $params)
+	{
+		$this->showTemplate('index');
+	}
 }

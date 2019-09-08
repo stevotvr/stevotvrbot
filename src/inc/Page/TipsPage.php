@@ -21,9 +21,9 @@ class TipsPage extends Page
 	/**
 	 * @inheritDoc
 	 */
-    public function run(array $params)
-    {
-        header('Access-Control-Allow-Origin: *');
-        echo json_encode(TipsModel::getAll() ?? []);
-    }
+	public function run(array $params)
+	{
+		header('Access-Control-Allow-Origin: *');
+		echo json_encode(TipsModel::getAll() ?? []);
+	}
 }

@@ -28,21 +28,21 @@ class FindCommand extends Command
 	 */
 	protected function exec(string $args, string $user = null)
 	{
- 		if (!$user)
- 		{
-	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-	        echo '400 Bad Request';
- 			return;
- 		}
+		if (!$user)
+		{
+			header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+			echo '400 Bad Request';
+			return;
+		}
 
- 		$item = ItemsModel::find($user);
- 		if ($item)
- 		{
-	        printf('%s found %s worth %d %s', $item['user'], $item['description'], $item['value'], SettingsModel::getPointsName());
- 		}
- 		else
- 		{
-	        echo 'No items could be found.';
- 		}
+		$item = ItemsModel::find($user);
+		if ($item)
+		{
+			printf('%s found %s worth %d %s', $item['user'], $item['description'], $item['value'], SettingsModel::getPointsName());
+		}
+		else
+		{
+			echo 'No items could be found.';
+		}
 	}
 }

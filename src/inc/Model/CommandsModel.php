@@ -15,36 +15,36 @@ namespace StevoTVRBot\Model;
  */
 class CommandsModel extends Model
 {
- 	/**
- 	 * Get the list of available chat bot commands.
- 	 *
- 	 * @return array|boolean Array containing chat command data, or false on
- 	 *                       failure
- 	 */
- 	public static function getCommands()
- 	{
- 		if ($stmt = self::db()->prepare("SELECT command, arguments, description, level FROM commands ORDER BY command ASC;"))
- 		{
- 			$commands = [];
+	/**
+	 * Get the list of available chat bot commands.
+	 *
+	 * @return array|boolean Array containing chat command data, or false on
+	 *                       failure
+	 */
+	public static function getCommands()
+	{
+		if ($stmt = self::db()->prepare("SELECT command, arguments, description, level FROM commands ORDER BY command ASC;"))
+		{
+			$commands = [];
 
- 			$stmt->execute();
- 			$stmt->bind_result($command, $arguments, $description, $level);
+			$stmt->execute();
+			$stmt->bind_result($command, $arguments, $description, $level);
 
- 			while ($stmt->fetch())
- 			{
- 				$commands[] = [
- 					'command'		=> $command,
- 					'arguments'		=> $arguments,
- 					'description'	=> $description,
- 					'level'			=> $level,
- 				];
- 			}
+			while ($stmt->fetch())
+			{
+				$commands[] = [
+					'command'		=> $command,
+					'arguments'		=> $arguments,
+					'description'	=> $description,
+					'level'			=> $level,
+				];
+			}
 
- 			$stmt->close();
+			$stmt->close();
 
- 			return $commands;
- 		}
+			return $commands;
+		}
 
- 		return false;
- 	}
+		return false;
+	}
 }

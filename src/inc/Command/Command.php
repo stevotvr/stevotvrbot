@@ -25,9 +25,9 @@ abstract class Command
 
 		if (empty($input[0]))
 		{
-	        header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-	        echo '400 Bad Request';
-	        return;
+			header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+			echo '400 Bad Request';
+			return;
 		}
 
 		$className = 'StevoTVRBot\\Command\\' . ucfirst(strtolower($input[0])) . 'Command';
@@ -38,8 +38,8 @@ abstract class Command
 		}
 		else
 		{
-	        header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-	        echo '404 Not Found';
+			header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+			echo '404 Not Found';
 		}
 	}
 
@@ -58,11 +58,11 @@ abstract class Command
 	 * @return string|null The username, or null if no valid username is
 	 *                     supplied
 	 */
-    private static function getUser()
-    {
-    	$options = [
-    		'regexp' => '/^[0-9a-zA-Z]\w{1,24}$/',
-    	];
-    	return filter_input(INPUT_GET, 'user', FILTER_VALIDATE_REGEXP, [ 'options' => $options ]);
-    }
+	private static function getUser()
+	{
+		$options = [
+			'regexp' => '/^[0-9a-zA-Z]\w{1,24}$/',
+		];
+		return filter_input(INPUT_GET, 'user', FILTER_VALIDATE_REGEXP, [ 'options' => $options ]);
+	}
 }

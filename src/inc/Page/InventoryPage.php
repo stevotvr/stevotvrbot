@@ -21,39 +21,39 @@ class InventoryPage extends Page
 	/**
 	 * @inheritDoc
 	 */
-    public function run(array $params)
-    {
-    	$data = [
-    		'pointsName'	=> htmlspecialchars(SettingsModel::getPointsName()),
-    		'inventory'		=> [],
-    		'user'			=> htmlspecialchars($params[0] ?? 'All Users'),
-    	];
+	public function run(array $params)
+	{
+		$data = [
+			'pointsName'	=> htmlspecialchars(SettingsModel::getPointsName()),
+			'inventory'		=> [],
+			'user'			=> htmlspecialchars($params[0] ?? 'All Users'),
+		];
 
-    	$inventory = ItemsModel::getInventory($params[0]);
-    	if (is_array($inventory))
-    	{
-    		foreach ($inventory as $item)
-    		{
-    			if (!isset($data['inventory'][$item['user']]))
-    			{
-    				$data['inventory'][$item['user']] = [
-    					'total'	=> [
-    						'items'	=> 0,
-    						'value'	=> 0,
-    					],
-    				];
-    			}
+		$inventory = ItemsModel::getInventory($params[0]);
+		if (is_array($inventory))
+		{
+			foreach ($inventory as $item)
+			{
+				if (!isset($data['inventory'][$item['user']]))
+				{
+					$data['inventory'][$item['user']] = [
+						'total'	=> [
+							'items'	=> 0,
+							'value'	=> 0,
+						],
+					];
+				}
 
-    			$data['inventory'][$item['user']]['items'][] = [
-    				'item'		=> htmlspecialchars($item['item']),
-    				'quantity'	=> $item['quantity'],
-    				'value'		=> $item['value'],
-    			];
-    			$data['inventory'][$item['user']]['total']['items'] += $item['quantity'];
-    			$data['inventory'][$item['user']]['total']['value'] += $item['value'];
-    		}
+				$data['inventory'][$item['user']]['items'][] = [
+					'item'		=> htmlspecialchars($item['item']),
+					'quantity'	=> $item['quantity'],
+					'value'		=> $item['value'],
+				];
+				$data['inventory'][$item['user']]['total']['items'] += $item['quantity'];
+				$data['inventory'][$item['user']]['total']['value'] += $item['value'];
+			}
 
-    		$this->showTemplate('inventory', $data);
-    	}
-    }
+			$this->showTemplate('inventory', $data);
+		}
+	}
 }

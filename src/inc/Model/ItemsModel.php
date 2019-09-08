@@ -243,7 +243,7 @@ class ItemsModel extends Model
  	}
 
  	/**
- 	 * Give an item to a use.
+ 	 * Give an item to a user.
  	 *
  	 * @param string $user   The username of the user to receive the item
  	 * @param int    $itemId The ID of the item to give

@@ -73,11 +73,11 @@ class ItemsModel extends Model
  	 */
  	public static function sell(string $user, string $item)
  	{
-        if ($stmt = self::db()->prepare("SELECT inventory.id, items.value FROM inventory LEFT JOIN items ON items.id = inventory.item WHERE inventory.user = ? AND items.item = ? LIMIT 1;"))
+        if ($stmt = self::db()->prepare("SELECT inventory.id, items.id, items.value FROM inventory LEFT JOIN items ON items.id = inventory.item WHERE inventory.user = ? AND items.item = ? LIMIT 1;"))
         {
             $stmt->bind_param('ss', $user, $item);
             $stmt->execute();
-            $stmt->bind_result($itemId, $value);
+            $stmt->bind_result($inventoryId, $itemId, $value);
             $valid = $stmt->fetch();
             $stmt->close();
 
@@ -88,13 +88,14 @@ class ItemsModel extends Model
 
 	        if ($stmt = self::db()->prepare("DELETE FROM inventory WHERE id = ?;"))
 	        {
-	            $stmt->bind_param('i', $itemId);
+	            $stmt->bind_param('i', $inventoryId);
 	            $stmt->execute();
 	            $stmt->close();
 
 	            return [
-	            	'user'	=> $user,
-	            	'value'	=> $value,
+	            	'user'		=> $user,
+	            	'itemId'	=> $itemId,
+	            	'value'		=> $value,
 	            ];
 	        }
         }
@@ -217,6 +218,25 @@ class ItemsModel extends Model
  			$stmt->close();
 
  			return $inventory;
+ 		}
+
+ 		return false;
+ 	}
+
+ 	/**
+ 	 * Adds an item to the store.
+ 	 *
+ 	 * @param int $itemId The ID of the item to add
+ 	 */
+ 	public static function addToStore(int $itemId)
+ 	{
+ 		if ($stmt = self::db()->prepare("UPDATE items SET quantity = quantity + 1 WHERE id = ?;"))
+ 		{
+ 			$stmt->bind_param('i', $itemId);
+ 			$stmt->execute();
+ 			$stmt->close();
+
+ 			return true;
  		}
 
  		return false;

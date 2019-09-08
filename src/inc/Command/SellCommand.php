@@ -48,6 +48,7 @@ class SellCommand extends Command
  		{
  			if ($this->addUserPoints($user, $sold['value']))
  			{
+ 				ItemsModel::addToStore($sold['itemId']);
 		    	printf('%s sold %s for %d %s', $sold['user'], $args, $sold['value'], SettingsModel::getPointsName());
  			}
  			else

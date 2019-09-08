@@ -28,6 +28,7 @@ CREATE TABLE `items` (
   `id` int(11) NOT NULL,
   `item` varchar(64) NOT NULL,
   `value` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT '0',
   `weight` int(11) NOT NULL,
   `recipe` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

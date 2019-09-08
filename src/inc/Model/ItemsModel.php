@@ -128,26 +128,6 @@ class ItemsModel extends Model
 	}
 
 	/**
-	 * Removes items from a user's inventory.
-	 *
-	 * @param string $user  The username of the user
-	 * @param array  $items The items to remove
-	 */
-	public static function takeItems(string $user, array $items)
-	{
-		if ($stmt = self::db()->prepare("DELETE FROM inventory WHERE user = ? AND item = ? ORDER BY time ASC LIMIT ?;"))
-		{
-			foreach ($items as $item => $quantity)
-			{
-				$stmt->bind_param('sii', $user, $item, $quantity);
-				$stmt->execute();
-			}
-
-			$stmt->close();
-		}
-	}
-
-	/**
 	 * Get the inventory of found items.
 	 *
 	 * @param string|null $user The user by which to limit the search, or null
@@ -196,25 +176,6 @@ class ItemsModel extends Model
 	}
 
 	/**
-	 * Adds an item to the store.
-	 *
-	 * @param int $itemId The ID of the item to add
-	 */
-	public static function addToStore(int $itemId)
-	{
-		if ($stmt = self::db()->prepare("UPDATE items SET quantity = quantity + 1 WHERE id = ?;"))
-		{
-			$stmt->bind_param('i', $itemId);
-			$stmt->execute();
-			$stmt->close();
-
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Give an item to a user.
 	 *
 	 * @param string $user The username of the user to receive the item
@@ -227,6 +188,45 @@ class ItemsModel extends Model
 		if ($stmt = self::db()->prepare("INSERT INTO inventory (user, item) VALUES (?, (SELECT id FROM items WHERE item = ?));"))
 		{
 			$stmt->bind_param('ss', $user, $item);
+			$stmt->execute();
+			$stmt->close();
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Removes items from a user's inventory.
+	 *
+	 * @param string $user  The username of the user
+	 * @param array  $items The items to remove
+	 */
+	public static function takeItems(string $user, array $items)
+	{
+		if ($stmt = self::db()->prepare("DELETE FROM inventory WHERE user = ? AND item = ? ORDER BY time ASC LIMIT ?;"))
+		{
+			foreach ($items as $item => $quantity)
+			{
+				$stmt->bind_param('sii', $user, $item, $quantity);
+				$stmt->execute();
+			}
+
+			$stmt->close();
+		}
+	}
+
+	/**
+	 * Adds an item to the store.
+	 *
+	 * @param int $itemId The ID of the item to add
+	 */
+	public static function addToStore(int $itemId)
+	{
+		if ($stmt = self::db()->prepare("UPDATE items SET quantity = quantity + 1 WHERE id = ?;"))
+		{
+			$stmt->bind_param('i', $itemId);
 			$stmt->execute();
 			$stmt->close();
 

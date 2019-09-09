@@ -43,7 +43,7 @@ class CraftCommand extends Command
 		}
 
 		$ingredients = ItemsModel::getRecipe($args);
-		if (!is_array($ingredients))
+		if (!$ingredients)
 		{
 			printf('%s cannot be crafted', $args);
 			return;
@@ -63,9 +63,9 @@ class CraftCommand extends Command
 			$userItems[$item['itemId']] = $item['quantity'];
 		}
 
-		foreach ($ingredients as $item => $quantity)
+		foreach ($ingredients as $item)
 		{
-			if (!isset($userItems[$item]) || $userItems[$item] < $quantity)
+			if (!isset($userItems[$item['itemId']]) || $userItems[$item['itemId']] < $item['quantity'])
 			{
 				printf('%s, you do not have all of the required ingredients to craft %s', $user, $args);
 				return;

@@ -29,8 +29,14 @@ CREATE TABLE `items` (
   `item` varchar(64) NOT NULL,
   `value` int(11) NOT NULL,
   `quantity` int(11) NOT NULL DEFAULT '0',
-  `weight` int(11) NOT NULL,
-  `recipe` text
+  `weight` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `recipe` (
+  `id` int(11) NOT NULL,
+  `item` int(11) NOT NULL,
+  `ingredient` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `schedule` (
@@ -72,6 +78,11 @@ ALTER TABLE `items`
   ADD UNIQUE KEY `item` (`item`),
   ADD KEY `weight` (`weight`);
 
+ALTER TABLE `recipe`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `item` (`item`),
+  ADD KEY `ingredient` (`ingredient`);
+
 ALTER TABLE `schedule`
   ADD PRIMARY KEY (`id`);
 
@@ -92,6 +103,9 @@ ALTER TABLE `inventory`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `recipe`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `schedule`

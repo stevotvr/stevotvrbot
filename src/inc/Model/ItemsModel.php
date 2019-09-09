@@ -108,23 +108,32 @@ class ItemsModel extends Model
 	 */
 	public static function getRecipe(string $item)
 	{
-		$itemId = $itemName = $recipe = null;
+		$recipe = [];
 
-		if ($stmt = self::db()->prepare("SELECT id, item, recipe FROM items WHERE recipe IS NOT NULL AND item = ? LIMIT 1;"))
+		if ($stmt = self::db()->prepare("SELECT items.id, items.item, recipe.quantity FROM recipe LEFT JOIN items ON items.id = recipe.ingredient WHERE recipe.item = (SELECT id FROM items WHERE item = ?);"))
 		{
 			$stmt->bind_param('s', $item);
 			$stmt->execute();
-			$stmt->bind_result($itemId, $itemName, $recipe);
-			$stmt->fetch();
+			$stmt->bind_result($itemId, $itemName, $quantity);
+
+			while ($stmt->fetch())
+			{
+				$recipe[] = [
+					'itemId'	=> $itemId,
+					'item'		=> $itemName,
+					'quantity'	=> $quantity,
+				];
+			}
+
 			$stmt->close();
 		}
 
-		if (!$itemId)
+		if (empty($recipe))
 		{
 			return false;
 		}
 
-		return json_decode($recipe, true);
+		return $recipe;
 	}
 
 	/**
@@ -207,9 +216,9 @@ class ItemsModel extends Model
 	{
 		if ($stmt = self::db()->prepare("DELETE FROM inventory WHERE user = ? AND item = ? ORDER BY time ASC LIMIT ?;"))
 		{
-			foreach ($items as $item => $quantity)
+			foreach ($items as $item)
 			{
-				$stmt->bind_param('sii', $user, $item, $quantity);
+				$stmt->bind_param('sii', $user, $item['itemId'], $item['quantity']);
 				$stmt->execute();
 			}
 

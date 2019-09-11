@@ -10,8 +10,6 @@
 
 namespace StevoTVRBot\Page;
 
-use StevoTVRBot\Model\TipsModel;
-
 /**
  * Handler for the index page, which is the default page.
  */

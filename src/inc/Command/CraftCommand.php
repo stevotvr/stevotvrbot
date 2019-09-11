@@ -10,7 +10,6 @@
 
 namespace StevoTVRBot\Command;
 
-use StevoTVRBot\Config;
 use StevoTVRBot\Model\ItemsModel;
 
 /**

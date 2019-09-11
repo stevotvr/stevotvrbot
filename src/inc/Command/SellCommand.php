@@ -10,9 +10,9 @@
 
 namespace StevoTVRBot\Command;
 
-use StevoTVRBot\Config;
 use StevoTVRBot\Model\ItemsModel;
 use StevoTVRBot\Model\SettingsModel;
+use StevoTVRBot\Model\StreamElementsModel;
 
 /**
  * Handler for the !sell command. This command takes an item description as
@@ -46,7 +46,7 @@ class SellCommand extends Command
 		$sold = ItemsModel::sell($user, $args);
 		if ($sold)
 		{
-			if ($this->addUserPoints($user, $sold['value']))
+			if (StreamElementsModel::addUserPoints($user, $sold['value']))
 			{
 				ItemsModel::addToStore($sold['itemId']);
 				printf('%s sold %s for %d %s', $sold['user'], $args, $sold['value'], SettingsModel::getPointsName());
@@ -61,41 +61,5 @@ class SellCommand extends Command
 		{
 			printf('%s, that item could not be found in your inventory.', $user);
 		}
-	}
-
-	/**
-	 * Add points to a StreamElements user.
-	 *
-	 * @param string $user   The username of the user
-	 * @param int    $points The number of points to add
-	 *
-	 * @return boolean True if the API request was successful, otherwise false
-	 */
-	private function addUserPoints(string $user, int $points)
-	{
-		$ctx = stream_context_create([
-			'http'	=> [
-				'ignore_errors'	=> '1',
-				'method'		=> 'PUT',
-				'header'		=> [
-					'Accept: application/json',
-					'Content-Type: Content-Type',
-					'Authorization: Bearer ' . Config::SE_JWT_TOKEN,
-				],
-			],
-		]);
-		$url = sprintf('https://api.streamelements.com/kappa/v2/points/%s/%s/%d', Config::SE_CHANNEL_ID, $user, $points);
-		$stream = @fopen($url, 'r', false, $ctx);
-		if (!$stream)
-		{
-			return false;
-		}
-
-		$meta = stream_get_meta_data($stream);
-		$status = array_shift($meta['wrapper_data']);
-		$response_code = (int) substr($status, strpos($status, ' ') + 1, 3);
-		fclose($stream);
-
-		return $response_code === 200;
 	}
 }

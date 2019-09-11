@@ -58,6 +58,50 @@ class ItemsModel extends Model
 	}
 
 	/**
+	 * Buys an item for a user. This searches the store for an item matching
+	 * the description and adds it to the user's inventory..
+	 *
+	 * @param string $user The username of the user buying the item
+	 * @param string $item The description of the item to buy
+	 *
+	 * @return array|boolean Array containing the user and value of the item
+	 *                       bought, or false on failure
+	 */
+	public static function buy(string $user, string $item)
+	{
+		$itemId = $itemName = $itemValue = null;
+
+		if ($stmt = self::db()->prepare("SELECT id, item, value FROM items WHERE quantity > 0 AND item = ?;"))
+		{
+			$stmt->bind_param('s', $item);
+			$stmt->execute();
+			$stmt->bind_result($itemId, $itemName, $itemValue);
+			$stmt->fetch();
+			$stmt->close();
+		}
+
+		if (!$itemId)
+		{
+			return false;
+		}
+
+		if ($stmt = self::db()->prepare("UPDATE items SET quantity = quantity - 1 WHERE id = ?;"))
+		{
+			$stmt->bind_param('i', $itemId);
+			$stmt->execute();
+			$stmt->close();
+
+			return [
+				'user'			=> $user,
+				'description'	=> $itemName,
+				'value'			=> $itemValue,
+			];
+		}
+
+		return false;
+	}
+
+	/**
 	 * Sells an item for a user. This searches a user inventory for an item
 	 * matching the description and deletes it.
 	 *

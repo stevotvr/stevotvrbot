@@ -52,4 +52,45 @@ class StreamElementsModel extends Model
 
 		return $response_code === 200;
 	}
+
+	/**
+	 * Get the number of points from a StreamElements user.
+	 *
+	 * @param string $user The username of the user
+	 *
+	 * @return int|boolean The number of points, or false on failure
+	 */
+	public static function getUserPoints(string $user)
+	{
+		$ctx = stream_context_create([
+			'http'	=> [
+				'ignore_errors'	=> '1',
+				'method'		=> 'GET',
+				'header'		=> [
+					'Accept: application/json',
+					'Content-Type: Content-Type',
+				],
+			],
+		]);
+		$url = sprintf('https://api.streamelements.com/kappa/v2/points/%s/%s', Config::SE_CHANNEL_ID, $user);
+		$stream = @fopen($url, 'r', false, $ctx);
+		if (!$stream)
+		{
+			return false;
+		}
+
+		$meta = stream_get_meta_data($stream);
+		$status = array_shift($meta['wrapper_data']);
+		$response_code = (int) substr($status, strpos($status, ' ') + 1, 3);
+		$response = stream_get_contents($stream);
+		fclose($stream);
+
+		if ($response_code === 200)
+		{
+			$response = json_decode($response, true);
+			return is_array($response) ? $response['points'] : false;
+		}
+
+		return false;
+	}
 }

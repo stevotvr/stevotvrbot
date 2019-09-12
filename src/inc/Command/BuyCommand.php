@@ -42,12 +42,21 @@ class BuyCommand extends Command
 			return;
 		}
 
-		$bought = ItemsModel::buy($user, $args);
-		if ($bought)
+		$item = ItemsModel::getStoreItem($args);
+		if ($item)
 		{
-			if (StreamElementsModel::addUserPoints($user, -$bought['value']))
+			if ($item['quantity'] < 1)
 			{
-				printf('%s bought %s for %d %s', $bought['user'], $args, $bought['value'], SettingsModel::getPointsName());
+				printf('%s, that item is out of stock.', $user);
+			}
+			elseif (StreamElementsModel::getUserPoints($user) < $item['value'])
+			{
+				printf('%s, you do not have enough %s to buy %s (costs %d %s).', $user, SettingsModel::getPointsName(), $item['description'], $item['value'], SettingsModel::getPointsName());
+			}
+			elseif (StreamElementsModel::addUserPoints($user, -$item['value']))
+			{
+				ItemsModel::buy($user, $args);
+				printf('%s bought %s for %d %s', $item['user'], $item['description'], $item['value'], SettingsModel::getPointsName());
 			}
 			else
 			{
@@ -57,7 +66,7 @@ class BuyCommand extends Command
 		}
 		else
 		{
-			printf('%s, that item is out of stock.', $user);
+			printf('%s, that item does not exist.', $user);
 		}
 	}
 }

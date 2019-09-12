@@ -69,36 +69,15 @@ class ItemsModel extends Model
 	 */
 	public static function buy(string $user, string $item)
 	{
-		$itemId = $itemName = $itemValue = null;
-
-		if ($stmt = self::db()->prepare("SELECT id, item, value FROM items WHERE quantity > 0 AND item = ?;"))
+		if ($stmt = self::db()->prepare("UPDATE items SET quantity = quantity - 1 WHERE quantity > 0 AND item = ?;"))
 		{
 			$stmt->bind_param('s', $item);
 			$stmt->execute();
-			$stmt->bind_result($itemId, $itemName, $itemValue);
-			$stmt->fetch();
+			$valid = $stmt->affected_rows > 0;
 			$stmt->close();
 		}
 
-		if (!$itemId)
-		{
-			return false;
-		}
-
-		if ($stmt = self::db()->prepare("UPDATE items SET quantity = quantity - 1 WHERE id = ?;"))
-		{
-			$stmt->bind_param('i', $itemId);
-			$stmt->execute();
-			$stmt->close();
-
-			return [
-				'user'			=> $user,
-				'description'	=> $itemName,
-				'value'			=> $itemValue,
-			];
-		}
-
-		return false;
+		return $valid && self::giveItem($user, $item);
 	}
 
 	/**
@@ -141,6 +120,40 @@ class ItemsModel extends Model
 		}
 
 		return false;
+	}
+
+	/**
+	 * Gets information about an item in the store.
+	 *
+	 * @param string $item The name of the item
+	 *
+	 * @return array|boolean Array containing the value and quantity of the
+	 *                       requested item, or false if the item doesn't exist
+	 */
+	public static function getStoreItem(string $item)
+	{
+		$itemId = $itemName = $itemValue = $itemQuantity = null;
+
+		if ($stmt = self::db()->prepare("SELECT id, item, value, quantity FROM items WHERE item = ?;"))
+		{
+			$stmt->bind_param('s', $item);
+			$stmt->execute();
+			$stmt->bind_result($itemId, $itemName, $itemValue, $itemQuantity);
+			$stmt->fetch();
+			$stmt->close();
+		}
+
+		if (!$itemId)
+		{
+			return false;
+		}
+
+		return [
+			'itemId'		=> $itemId,
+			'description'	=> $itemName,
+			'value'			=> $itemValue,
+			'quantity'		=> $itemQuantity,
+		];
 	}
 
 	/**

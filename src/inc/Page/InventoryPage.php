@@ -29,7 +29,7 @@ class InventoryPage extends Page
 			'user'			=> htmlspecialchars($params[0] ?? 'All Users'),
 		];
 
-		$inventory = ItemsModel::getInventory($params[0]);
+		$inventory = ItemsModel::getInventory($params[0] ?? null);
 		if (is_array($inventory))
 		{
 			foreach ($inventory as $item)

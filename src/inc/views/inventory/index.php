@@ -11,7 +11,8 @@
 			<ul>
 <?php foreach ($user['items'] as $item): ?>
 				<li>
-					<h4><?php echo $item['item']; ?></h4>
+					<header>
+						<h4><?php echo $item['item']; ?></h4>
 					</header>
 					<dl>
 						<dt>Value:</dt>

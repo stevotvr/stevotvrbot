@@ -123,6 +123,39 @@ class ItemsModel extends Model
 	}
 
 	/**
+	 * Gets all of the items available from the store.
+	 *
+	 * @return array|boolean Array containing information on all the items
+	 *                       available from the store, or false on failure
+	 */
+	public static function getStore()
+	{
+		if ($stmt = self::db()->prepare("SELECT id, item, value, quantity FROM items WHERE quantity > 0 ORDER BY item ASC;"))
+		{
+			$store = [];
+
+			$stmt->execute();
+			$stmt->bind_result($itemId, $itemName, $itemValue, $itemQuantity);
+
+			while ($stmt->fetch())
+			{
+				$store[] = [
+					'itemId'	=> $itemId,
+					'item'		=> $itemName,
+					'value'		=> $itemValue,
+					'quantity'	=> $itemQuantity,
+				];
+			}
+
+			$stmt->close();
+
+			return $store;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Gets information about an item in the store.
 	 *
 	 * @param string $item The name of the item

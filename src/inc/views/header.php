@@ -11,7 +11,7 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 	<link rel="manifest" href="/site.webmanifest">
 	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-	<link rel="stylesheet" href="/css/main.css">
+	<link rel="stylesheet" href="/css/main.css?v=2">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -26,6 +26,7 @@
 			<li><a href="/schedule">Stream Schedule</a></li>
 			<li><a href="/commands">Chat Commands</a></li>
 			<li><a href="/inventory">Inventory</a></li>
+			<li><a href="/recipes">Item Crafting</a></li>
 			<li><a href="/store">Store</a></li>
 		</ul>
 		<h1>StevoTVRBot</h1>

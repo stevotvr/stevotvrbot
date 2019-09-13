@@ -107,19 +107,19 @@ th, td {
 	width: 300px;
 }
 
-#inventory h3 {
+#inventory h3, #recipes h3 {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	width: 190px;
 }
 
-#inventory ul, #store ul {
+#inventory ul, #recipes section > ul, #store ul {
 	margin-top: 6px;
 	padding: 0px;
 }
 
-#inventory li, #store li {
+#inventory li, #recipes section > ul > li, #store li {
 	background: #0E001D;
 	border: 2px solid #CCC;
 	border-radius: 4px;

@@ -190,6 +190,35 @@ class ItemsModel extends Model
 	}
 
 	/**
+	 * Gets all the crafting recipes.
+	 *
+	 * @return array|boolean Array containing all of the recipes in the
+	 *                       database, or false on failure
+	 */
+	public static function getRecipes()
+	{
+		if ($stmt = self::db()->prepare("SELECT item.item, ingredient.item, recipe.quantity FROM recipe LEFT JOIN items item ON item.id = recipe.item LEFT JOIN items ingredient ON ingredient.id = recipe.ingredient ORDER BY item.item ASC, ingredient.item ASC;"))
+		{
+			$recipes = [];
+
+			$stmt->execute();
+			$stmt->bind_result($itemName, $ingredient, $quantity);
+
+			while ($stmt->fetch())
+			{
+				$recipes[$itemName][] = [
+					'ingredient'	=> $ingredient,
+					'quantity'		=> $quantity,
+				];
+			}
+
+			return $recipes;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Gets a crafting recipe for the requested item.
 	 *
 	 * @param string $item The name of the requested item

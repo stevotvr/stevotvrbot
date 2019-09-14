@@ -41,10 +41,17 @@ class CraftCommand extends Command
 			return;
 		}
 
-		$ingredients = ItemsModel::getRecipe($args);
+		$itemInfo = ItemsModel::getItem($args);
+		if (!$itemInfo)
+		{
+			printf('Unknown item: %s', $args);
+			return;
+		}
+
+		$ingredients = ItemsModel::getRecipe($itemInfo['id']);
 		if (!$ingredients)
 		{
-			printf('%s cannot be crafted', $args);
+			printf('%s cannot be crafted', $itemInfo['namePlural']);
 			return;
 		}
 
@@ -66,15 +73,15 @@ class CraftCommand extends Command
 		{
 			if (!isset($userItems[$item['itemId']]) || $userItems[$item['itemId']] < $item['quantity'])
 			{
-				printf('%s, you do not have all of the required ingredients to craft %s', $user, $args);
+				printf('%s, you do not have all of the required ingredients to craft %s', $user, $itemInfo['nameSingle']);
 				return;
 			}
 		}
 
 		ItemsModel::takeItems($user, $ingredients);
-		if (ItemsModel::giveItem($user, $args))
+		if (ItemsModel::giveItem($user, $itemInfo['id']))
 		{
-			printf('%s crafted %s', $user, $args);
+			printf('%s crafted %s', $user, $itemInfo['nameSingle']);
 		}
 	}
 }

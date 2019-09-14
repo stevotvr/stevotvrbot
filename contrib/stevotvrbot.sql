@@ -26,7 +26,9 @@ CREATE TABLE `inventory` (
 
 CREATE TABLE `items` (
   `id` int(11) NOT NULL,
-  `item` varchar(64) NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `nameSingle` varchar(64) NOT NULL,
+  `namePlural` varchar(64) NOT NULL,
   `value` int(11) NOT NULL,
   `quantity` int(11) NOT NULL DEFAULT '0',
   `weight` int(11) NOT NULL
@@ -75,7 +77,9 @@ ALTER TABLE `inventory`
 
 ALTER TABLE `items`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `item` (`item`),
+  ADD UNIQUE KEY `name` (`name`) USING BTREE,
+  ADD UNIQUE KEY `nameSingle` (`nameSingle`),
+  ADD UNIQUE KEY `namePlural` (`namePlural`),
   ADD KEY `weight` (`weight`);
 
 ALTER TABLE `recipe`

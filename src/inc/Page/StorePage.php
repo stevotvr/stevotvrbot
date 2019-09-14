@@ -34,7 +34,7 @@ class StorePage extends Page
 			foreach ($store as $item)
 			{
 				$data['store'][] = [
-					'item'		=> htmlspecialchars($item['item']),
+					'item'		=> htmlspecialchars($item['itemName']),
 					'quantity'	=> $item['quantity'],
 					'value'		=> $item['value'],
 				];

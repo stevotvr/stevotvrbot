@@ -49,13 +49,20 @@ class StoreCommand extends Command
 			return;
 		}
 
+		$itemInfo = ItemsModel::getItem($args[1]);
+		if (!$itemInfo)
+		{
+			printf('Unknown item: %s', $args[1]);
+			return;
+		}
+
 		switch ($args[0])
 		{
 			case 'buy':
-				$this->buy($user, $args[1]);
+				$this->buy($user, $itemInfo);
 				break;
 			case 'sell':
-				$this->sell($user, $args[1]);
+				$this->sell($user, $itemInfo);
 				break;
 			default:
 				echo 'Usage: !store <buy|sell> <item>';
@@ -66,54 +73,45 @@ class StoreCommand extends Command
 	/**
 	 * Handle the buy command.
 	 *
-	 * @param string $user The user calling the command
-	 * @param string $item The item being bought
+	 * @param string $user     The user calling the command
+	 * @param array  $itemInfo The item being bought
 	 */
-	protected function buy(string $user, string $item)
+	protected function buy(string $user, array $itemInfo)
 	{
-		$storeItem = ItemsModel::getStoreItem($item);
-		if ($storeItem)
+		if ($itemInfo['quantity'] < 1)
 		{
-			if ($storeItem['quantity'] < 1)
-			{
-				printf('%s, that item is out of stock.', $user);
-			}
-			elseif (StreamElementsModel::getUserPoints($user) < $storeItem['value'])
-			{
-				printf('%s, you do not have enough %s to buy %s (costs %d %s).', $user, SettingsModel::getPointsName(), $storeItem['description'], $storeItem['value'], SettingsModel::getPointsName());
-			}
-			elseif (StreamElementsModel::addUserPoints($user, -$storeItem['value']))
-			{
-				ItemsModel::buy($user, $item);
-				printf('%s bought %s for %d %s', $storeItem['user'], $storeItem['description'], $storeItem['value'], SettingsModel::getPointsName());
-			}
-			else
-			{
-				header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
-				echo '503 Service Unavailable';
-			}
+			printf('%s, that item is out of stock.', $user);
+		}
+		elseif (StreamElementsModel::getUserPoints($user) < $itemInfo['value'])
+		{
+			printf('%s, you do not have enough %s to buy %s (costs %d %s).', $user, SettingsModel::getPointsName(), $itemInfo['nameSingle'], $itemInfo['value'], SettingsModel::getPointsName());
+		}
+		elseif (StreamElementsModel::addUserPoints($user, -$itemInfo['value']))
+		{
+			ItemsModel::buy($user, $itemInfo['id']);
+			printf('%s bought %s for %d %s', $user, $itemInfo['nameSingle'], $itemInfo['value'], SettingsModel::getPointsName());
 		}
 		else
 		{
-			printf('%s, that item does not exist.', $user);
+			header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service Unavailable');
+			echo '503 Service Unavailable';
 		}
 	}
 
 	/**
 	 * Handle the sell command.
 	 *
-	 * @param string $user The user calling the command
-	 * @param string $item The item being sold
+	 * @param string $user     The user calling the command
+	 * @param array  $itemInfo The item being sold
 	 */
-	protected function sell(string $user, string $item)
+	protected function sell(string $user, array $itemInfo)
 	{
-		$sold = ItemsModel::sell($user, $item);
-		if ($sold)
+		if (ItemsModel::sell($user, $itemInfo['id']))
 		{
-			if (StreamElementsModel::addUserPoints($user, $sold['value']))
+			if (StreamElementsModel::addUserPoints($user, $itemInfo['value']))
 			{
-				ItemsModel::addToStore($sold['itemId']);
-				printf('%s sold %s for %d %s', $sold['user'], $item, $sold['value'], SettingsModel::getPointsName());
+				ItemsModel::addToStore($itemInfo['id']);
+				printf('%s sold %s for %d %s', $user, $itemInfo['nameSingle'], $itemInfo['value'], SettingsModel::getPointsName());
 			}
 			else
 			{

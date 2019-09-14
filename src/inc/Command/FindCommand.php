@@ -38,7 +38,7 @@ class FindCommand extends Command
 		$item = ItemsModel::find($user);
 		if ($item)
 		{
-			printf('%s found %s worth %d %s', $item['user'], $item['description'], $item['value'], SettingsModel::getPointsName());
+			printf('%s found %s worth %d %s', $user, $item['itemName'], $item['value'], SettingsModel::getPointsName());
 		}
 		else
 		{

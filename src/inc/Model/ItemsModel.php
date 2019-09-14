@@ -26,12 +26,12 @@ class ItemsModel extends Model
 	 */
 	public static function find(string $user)
 	{
-		$itemId = $itemName = $itemValue = null;
+		$itemId = $itemName = $value = null;
 
-		if ($stmt = self::db()->prepare("SELECT id, item, value FROM items WHERE weight > 0 ORDER BY -LOG(RAND()) / weight LIMIT 1;"))
+		if ($stmt = self::db()->prepare("SELECT id, nameSingle, value FROM items WHERE weight > 0 ORDER BY -LOG(RAND()) / weight LIMIT 1;"))
 		{
 			$stmt->execute();
-			$stmt->bind_result($itemId, $itemName, $itemValue);
+			$stmt->bind_result($itemId, $itemName, $value);
 			$stmt->fetch();
 			$stmt->close();
 		}
@@ -47,11 +47,7 @@ class ItemsModel extends Model
 			$stmt->execute();
 			$stmt->close();
 
-			return [
-				'user'			=> $user,
-				'description'	=> $itemName,
-				'value'			=> $itemValue,
-			];
+			return compact('itemId', 'itemName', 'value');
 		}
 
 		return false;
@@ -61,46 +57,46 @@ class ItemsModel extends Model
 	 * Buys an item for a user. This searches the store for an item matching
 	 * the description and adds it to the user's inventory..
 	 *
-	 * @param string $user The username of the user buying the item
-	 * @param string $item The description of the item to buy
+	 * @param string $user   The username of the user buying the item
+	 * @param int    $itemId The ID of the item to buy
 	 *
 	 * @return array|boolean Array containing the user and value of the item
 	 *                       bought, or false on failure
 	 */
-	public static function buy(string $user, string $item)
+	public static function buy(string $user, int $itemId)
 	{
-		if ($stmt = self::db()->prepare("UPDATE items SET quantity = quantity - 1 WHERE quantity > 0 AND item = ?;"))
+		if ($stmt = self::db()->prepare("UPDATE items SET quantity = quantity - 1 WHERE quantity > 0 AND id = ?;"))
 		{
-			$stmt->bind_param('s', $item);
+			$stmt->bind_param('i', $itemId);
 			$stmt->execute();
 			$valid = $stmt->affected_rows > 0;
 			$stmt->close();
 		}
 
-		return $valid && self::giveItem($user, $item);
+		return $valid && self::giveItem($user, $itemId);
 	}
 
 	/**
 	 * Sells an item for a user. This searches a user inventory for an item
 	 * matching the description and deletes it.
 	 *
-	 * @param string $user The username of the user selling the item
-	 * @param string $item The description of the item to sell
+	 * @param string $user   The username of the user selling the item
+	 * @param int    $itemId The ID of the item to sell
 	 *
 	 * @return array|boolean Array containing the user and value of the item
 	 *                       sold, or false on failure
 	 */
-	public static function sell(string $user, string $item)
+	public static function sell(string $user, int $itemId)
 	{
-		if ($stmt = self::db()->prepare("SELECT inventory.id, items.id, items.value FROM inventory LEFT JOIN items ON items.id = inventory.item WHERE inventory.user = ? AND items.item = ? LIMIT 1;"))
+		if ($stmt = self::db()->prepare("SELECT inventory.id FROM inventory LEFT JOIN items ON items.id = inventory.item WHERE inventory.user = ? AND items.id = ? LIMIT 1;"))
 		{
-			$stmt->bind_param('ss', $user, $item);
+			$stmt->bind_param('si', $user, $itemId);
 			$stmt->execute();
-			$stmt->bind_result($inventoryId, $itemId, $value);
+			$stmt->bind_result($inventoryId);
 			$valid = $stmt->fetch();
 			$stmt->close();
 
-			if (!$value)
+			if (!$inventoryId)
 			{
 				return false;
 			}
@@ -111,11 +107,7 @@ class ItemsModel extends Model
 				$stmt->execute();
 				$stmt->close();
 
-				return [
-					'user'		=> $user,
-					'itemId'	=> $itemId,
-					'value'		=> $value,
-				];
+				return true;
 			}
 		}
 
@@ -130,21 +122,16 @@ class ItemsModel extends Model
 	 */
 	public static function getStore()
 	{
-		if ($stmt = self::db()->prepare("SELECT id, item, value, quantity FROM items WHERE quantity > 0 ORDER BY item ASC;"))
+		if ($stmt = self::db()->prepare("SELECT id, name, value, quantity FROM items WHERE quantity > 0 ORDER BY name ASC;"))
 		{
 			$store = [];
 
 			$stmt->execute();
-			$stmt->bind_result($itemId, $itemName, $itemValue, $itemQuantity);
+			$stmt->bind_result($itemId, $itemName, $value, $quantity);
 
 			while ($stmt->fetch())
 			{
-				$store[] = [
-					'itemId'	=> $itemId,
-					'item'		=> $itemName,
-					'value'		=> $itemValue,
-					'quantity'	=> $itemQuantity,
-				];
+				$store[] = compact('itemId', 'itemName', 'value', 'quantity');
 			}
 
 			$stmt->close();
@@ -156,40 +143,6 @@ class ItemsModel extends Model
 	}
 
 	/**
-	 * Gets information about an item in the store.
-	 *
-	 * @param string $item The name of the item
-	 *
-	 * @return array|boolean Array containing the value and quantity of the
-	 *                       requested item, or false if the item doesn't exist
-	 */
-	public static function getStoreItem(string $item)
-	{
-		$itemId = $itemName = $itemValue = $itemQuantity = null;
-
-		if ($stmt = self::db()->prepare("SELECT id, item, value, quantity FROM items WHERE item = ?;"))
-		{
-			$stmt->bind_param('s', $item);
-			$stmt->execute();
-			$stmt->bind_result($itemId, $itemName, $itemValue, $itemQuantity);
-			$stmt->fetch();
-			$stmt->close();
-		}
-
-		if (!$itemId)
-		{
-			return false;
-		}
-
-		return [
-			'itemId'		=> $itemId,
-			'description'	=> $itemName,
-			'value'			=> $itemValue,
-			'quantity'		=> $itemQuantity,
-		];
-	}
-
-	/**
 	 * Gets all the crafting recipes.
 	 *
 	 * @return array|boolean Array containing all of the recipes in the
@@ -197,7 +150,7 @@ class ItemsModel extends Model
 	 */
 	public static function getRecipes()
 	{
-		if ($stmt = self::db()->prepare("SELECT item.item, ingredient.item, recipe.quantity FROM recipe LEFT JOIN items item ON item.id = recipe.item LEFT JOIN items ingredient ON ingredient.id = recipe.ingredient ORDER BY item.item ASC, ingredient.item ASC;"))
+		if ($stmt = self::db()->prepare("SELECT item.name, ingredient.name, recipe.quantity FROM recipe LEFT JOIN items item ON item.id = recipe.item LEFT JOIN items ingredient ON ingredient.id = recipe.ingredient ORDER BY item.name ASC, ingredient.name ASC;"))
 		{
 			$recipes = [];
 
@@ -206,10 +159,7 @@ class ItemsModel extends Model
 
 			while ($stmt->fetch())
 			{
-				$recipes[$itemName][] = [
-					'ingredient'	=> $ingredient,
-					'quantity'		=> $quantity,
-				];
+				$recipes[$itemName][] = compact('ingredient', 'quantity');
 			}
 
 			return $recipes;
@@ -221,27 +171,23 @@ class ItemsModel extends Model
 	/**
 	 * Gets a crafting recipe for the requested item.
 	 *
-	 * @param string $item The name of the requested item
+	 * @param int $itemId The ID of the requested item
 	 *
 	 * @return array|boolean The ingredients or false if one doesn't exist
 	 */
-	public static function getRecipe(string $item)
+	public static function getRecipe(int $itemId)
 	{
 		$recipe = [];
 
-		if ($stmt = self::db()->prepare("SELECT items.id, items.item, recipe.quantity FROM recipe LEFT JOIN items ON items.id = recipe.ingredient WHERE recipe.item = (SELECT id FROM items WHERE item = ?);"))
+		if ($stmt = self::db()->prepare("SELECT items.id, items.name, recipe.quantity FROM recipe LEFT JOIN items ON items.id = recipe.ingredient WHERE recipe.item = ?;"))
 		{
-			$stmt->bind_param('s', $item);
+			$stmt->bind_param('i', $itemId);
 			$stmt->execute();
 			$stmt->bind_result($itemId, $itemName, $quantity);
 
 			while ($stmt->fetch())
 			{
-				$recipe[] = [
-					'itemId'	=> $itemId,
-					'item'		=> $itemName,
-					'quantity'	=> $quantity,
-				];
+				$recipe[] = compact('itemId', 'itemName', 'quantity');
 			}
 
 			$stmt->close();
@@ -266,12 +212,12 @@ class ItemsModel extends Model
 	 */
 	public static function getInventory(string $user = null)
 	{
-		$sql = "SELECT inventory.user, items.id, items.item, items.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item ";
+		$sql = "SELECT inventory.user, items.id, items.name, items.value, COUNT(*) FROM inventory LEFT JOIN items ON items.id = inventory.item ";
 		if ($user)
 		{
 			$sql .= "WHERE inventory.user = ? ";
 		}
-		$sql .= "GROUP BY inventory.user, items.item, items.value ORDER BY inventory.user ASC, items.item ASC;";
+		$sql .= "GROUP BY inventory.user, items.name, items.value ORDER BY inventory.user ASC, items.name ASC;";
 
 		if ($stmt = self::db()->prepare($sql))
 		{
@@ -282,17 +228,11 @@ class ItemsModel extends Model
 				$stmt->bind_param('s', $user);
 			}
 			$stmt->execute();
-			$stmt->bind_result($user, $itemId, $item, $value, $quantity);
+			$stmt->bind_result($user, $itemId, $itemName, $value, $quantity);
 
 			while ($stmt->fetch())
 			{
-				$inventory[] = [
-					'user'		=> $user,
-					'itemId'	=> $itemId,
-					'item'		=> $item,
-					'quantity'	=> $quantity,
-					'value'		=> $value,
-				];
+				$inventory[] = compact('user', 'itemId', 'itemName', 'quantity', 'value');
 			}
 
 			$stmt->close();
@@ -306,16 +246,16 @@ class ItemsModel extends Model
 	/**
 	 * Give an item to a user.
 	 *
-	 * @param string $user The username of the user to receive the item
-	 * @param string $item The name of the item to give
+	 * @param string $user   The username of the user to receive the item
+	 * @param int    $itemId The ID of the item to give
 	 *
 	 * @return boolean True on success, false on failure
 	 */
-	public static function giveItem(string $user, string $item)
+	public static function giveItem(string $user, int $itemId)
 	{
-		if ($stmt = self::db()->prepare("INSERT INTO inventory (user, item) VALUES (?, (SELECT id FROM items WHERE item = ?));"))
+		if ($stmt = self::db()->prepare("INSERT INTO inventory (user, item) VALUES (?, ?);"))
 		{
-			$stmt->bind_param('ss', $user, $item);
+			$stmt->bind_param('si', $user, $itemId);
 			$stmt->execute();
 			$stmt->close();
 
@@ -359,6 +299,33 @@ class ItemsModel extends Model
 			$stmt->close();
 
 			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Gets information about an item.
+	 *
+	 * @param string $item The name of the item
+	 *
+	 * @return array|boolean Array containing information about the item, or
+	 *                       false if the item does not exist
+	 */
+	public static function getItem(string $item)
+	{
+		if ($stmt = self::db()->prepare("SELECT id, name, nameSingle, namePlural, value, quantity FROM items WHERE name = ? OR nameSingle = ? OR namePlural = ?;"))
+		{
+			$stmt->bind_param('sss', $item, $item, $item);
+			$stmt->execute();
+			$stmt->bind_result($id, $name, $nameSingle, $namePlural, $value, $quantity);
+			$stmt->fetch();
+			$stmt->close();
+		}
+
+		if ($id)
+		{
+			return compact('id', 'name', 'nameSingle', 'namePlural', 'value', 'quantity');
 		}
 
 		return false;

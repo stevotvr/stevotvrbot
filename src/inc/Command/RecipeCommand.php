@@ -32,17 +32,24 @@ class RecipeCommand extends Command
 			return;
 		}
 
-		$recipe = ItemsModel::getRecipe($args);
+		$itemInfo = ItemsModel::getItem($args);
+		if (!$itemInfo)
+		{
+			printf('Unknown item: %s', $args);
+			return;
+		}
+
+		$recipe = ItemsModel::getRecipe($itemInfo['id']);
 		if (!$recipe)
 		{
-			printf('No recipe found for %s', $args);
+			printf('No recipe found for %s', $itemInfo['namePlural']);
 			return;
 		}
 
 		$ingredients = [];
 		foreach ($recipe as $ingredient)
 		{
-			$ingredients[] = $ingredient['quantity'] . 'x ' . $ingredient['item'];
+			$ingredients[] = $ingredient['quantity'] . 'x ' . $ingredient['itemName'];
 		}
 
 		if (count($ingredients) > 1)
@@ -50,6 +57,6 @@ class RecipeCommand extends Command
 			$ingredients[] = 'and ' . array_pop($ingredients);
 		}
 
-		printf('Recipe to craft %s: %s', $args, implode(count($ingredients) > 2 ? ', ' : ' ', $ingredients));
+		printf('Recipe to craft %s: %s', $itemInfo['nameSingle'], implode(count($ingredients) > 2 ? ', ' : ' ', $ingredients));
 	}
 }

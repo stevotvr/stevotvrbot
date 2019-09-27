@@ -27,30 +27,27 @@ class StreamElementsModel extends Model
 	 */
 	public static function addUserPoints(string $user, int $points)
 	{
-		$ctx = stream_context_create([
-			'http'	=> [
-				'ignore_errors'	=> '1',
-				'method'		=> 'PUT',
-				'header'		=> [
-					'Accept: application/json',
-					'Content-Type: Content-Type',
-					'Authorization: Bearer ' . Config::SE_JWT_TOKEN,
-				],
-			],
-		]);
 		$url = sprintf('https://api.streamelements.com/kappa/v2/points/%s/%s/%d', Config::SE_CHANNEL_ID, $user, $points);
-		$stream = @fopen($url, 'r', false, $ctx);
-		if (!$stream)
+		$ch = curl_init($url);
+		if ($ch === false)
 		{
 			return false;
 		}
 
-		$meta = stream_get_meta_data($stream);
-		$status = array_shift($meta['wrapper_data']);
-		$response_code = (int) substr($status, strpos($status, ' ') + 1, 3);
-		fclose($stream);
+		curl_setopt($ch, CURLOPT_PUT, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			'Accept: application/json',
+			'Content-Type: Content-Type',
+			'Authorization: Bearer ' . Config::SE_JWT_TOKEN,
+		]);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-		return $response_code === 200;
+		curl_exec($ch);
+		$responseCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+
+		curl_close($ch);
+
+		return $responseCode === 200;
 	}
 
 	/**
@@ -62,30 +59,25 @@ class StreamElementsModel extends Model
 	 */
 	public static function getUserPoints(string $user)
 	{
-		$ctx = stream_context_create([
-			'http'	=> [
-				'ignore_errors'	=> '1',
-				'method'		=> 'GET',
-				'header'		=> [
-					'Accept: application/json',
-					'Content-Type: Content-Type',
-				],
-			],
-		]);
 		$url = sprintf('https://api.streamelements.com/kappa/v2/points/%s/%s', Config::SE_CHANNEL_ID, $user);
-		$stream = @fopen($url, 'r', false, $ctx);
-		if (!$stream)
+		$ch = curl_init($url);
+		if ($ch === false)
 		{
 			return false;
 		}
 
-		$meta = stream_get_meta_data($stream);
-		$status = array_shift($meta['wrapper_data']);
-		$response_code = (int) substr($status, strpos($status, ' ') + 1, 3);
-		$response = stream_get_contents($stream);
-		fclose($stream);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			'Accept: application/json',
+			'Content-Type: Content-Type',
+		]);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-		if ($response_code === 200)
+		$response = curl_exec($ch);
+		$responseCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+
+		curl_close($ch);
+
+		if ($responseCode === 200)
 		{
 			$response = json_decode($response, true);
 			return is_array($response) ? $response['points'] : false;

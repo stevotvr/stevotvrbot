@@ -16,6 +16,11 @@ namespace StevoTVRBot;
 class Config
 {
 	/**
+	 * The base URL for the site.
+	 */
+	const BASE_URL = '';
+
+	/**
 	 * MySQL host.
 	 */
 	const DBHOST = '';
@@ -44,6 +49,16 @@ class Config
 	 * The secret for API requests.
 	 */
 	const SECRET = '';
+
+	/**
+	 * The Twitch application ID.
+	 */
+	const TWITCH_APP_ID = '';
+
+	/**
+	 * The Twitch application secret.
+	 */
+	const TWITCH_APP_SECRET = '';
 
 	/**
 	 * The StreamElements channel ID.

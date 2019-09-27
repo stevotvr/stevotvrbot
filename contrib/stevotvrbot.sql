@@ -65,6 +65,14 @@ CREATE TABLE `tips` (
   `status` enum('PENDING','APPROVED','REJECTED','') NOT NULL DEFAULT 'PENDING'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `accessToken` varchar(64) NOT NULL,
+  `refreshToken` varchar(64) NOT NULL,
+  `isAdmin` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 ALTER TABLE `commands`
   ADD PRIMARY KEY (`id`),
@@ -99,6 +107,10 @@ ALTER TABLE `tips`
   ADD KEY `status` (`status`),
   ADD KEY `time` (`time`);
 
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
 
 ALTER TABLE `commands`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
@@ -116,6 +128,9 @@ ALTER TABLE `schedule`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `tips`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 

@@ -98,7 +98,10 @@ class UsersModel extends Model
 	 */
 	public static function initAuthFlow(string $returnPath = '')
 	{
-		session_start();
+		if (!session_id())
+		{
+			session_start();
+		}
 
 		$_SESSION['return_url'] = Config::BASE_URL . $returnPath;
 		$_SESSION['state'] = md5(mt_rand());

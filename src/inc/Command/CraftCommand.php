@@ -41,7 +41,7 @@ class CraftCommand extends Command
 			return;
 		}
 
-		$itemInfo = ItemsModel::getItem($args);
+		$itemInfo = ItemsModel::findItem($args);
 		if (!$itemInfo)
 		{
 			printf('Unknown item: %s', $args);

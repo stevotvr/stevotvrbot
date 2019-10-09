@@ -49,7 +49,7 @@ class StoreCommand extends Command
 			return;
 		}
 
-		$itemInfo = ItemsModel::getItem($args[1]);
+		$itemInfo = ItemsModel::findItem($args[1]);
 		if (!$itemInfo)
 		{
 			printf('Unknown item: %s', $args[1]);

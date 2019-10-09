@@ -202,6 +202,37 @@ class ItemsModel extends Model
 	}
 
 	/**
+	 * Set the crafting recipe for an item.
+	 *
+	 * @param int   $itemId      The ID of the item for which to set the recipe
+	 * @param array $ingredients Array of ingredient item quantities
+	 */
+	public static function setRecipe(int $itemId, array $ingredients)
+	{
+		if ($stmt = self::db()->prepare('DELETE FROM recipe WHERE item = ?;'))
+		{
+			$stmt->bind_param('i', $itemId);
+			$stmt->execute();
+			$stmt->close();
+		}
+
+		if ($stmt = self::db()->prepare('INSERT INTO recipe (item, ingredient, quantity) VALUES (?, ?, ?);'))
+		{
+			$stmt->bind_param('iii', $itemId, $ingredient, $quantity);
+			foreach ($ingredients as $ingredient => $quantity)
+			{
+				if ($quantity < 1)
+				{
+					continue;
+				}
+
+				$stmt->execute();
+			}
+			$stmt->close();
+		}
+	}
+
+	/**
 	 * Get the inventory of found items.
 	 *
 	 * @param string|null $user The user by which to limit the search, or null
@@ -312,22 +343,181 @@ class ItemsModel extends Model
 	 * @return array|boolean Array containing information about the item, or
 	 *                       false if the item does not exist
 	 */
-	public static function getItem(string $item)
+	public static function findItem(string $item)
 	{
-		if ($stmt = self::db()->prepare("SELECT id, name, nameSingle, namePlural, value, quantity FROM items WHERE name = ? OR nameSingle = ? OR namePlural = ?;"))
+		if ($stmt = self::db()->prepare("SELECT id, slug, name, nameSingle, namePlural, value, quantity FROM items WHERE name = ? OR nameSingle = ? OR namePlural = ?;"))
 		{
 			$stmt->bind_param('sss', $item, $item, $item);
 			$stmt->execute();
-			$stmt->bind_result($id, $name, $nameSingle, $namePlural, $value, $quantity);
+			$stmt->bind_result($id, $slug, $name, $nameSingle, $namePlural, $value, $quantity);
 			$stmt->fetch();
 			$stmt->close();
 		}
 
 		if ($id)
 		{
-			return compact('id', 'name', 'nameSingle', 'namePlural', 'value', 'quantity');
+			return compact('id', 'slug', 'name', 'nameSingle', 'namePlural', 'value', 'quantity');
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get an item from an item ID.
+	 *
+	 * @param int $itemId The ID of the item to get
+	 *
+	 * @return array|boolean The item data, or false if the item is not found
+	 */
+	public static function getItemById(int $itemId)
+	{
+		return self::getItem('id', 'i', $itemId);
+	}
+
+	/**
+	 * Get an item from an item slug.
+	 *
+	 * @param string $slug The slug of the item to get
+	 *
+	 * @return array|boolean The item data, or false if the item is not found
+	 */
+	public static function getItemBySlug(string $slug)
+	{
+		return self::getItem('slug', 's', $slug);
+	}
+
+	/**
+	 * Get all of the items in the database.
+	 *
+	 * @return array|boolean The data for all items, or false on failure
+	 */
+	public static function getItems()
+	{
+		if ($stmt = self::db()->prepare('SELECT id, slug, name, value, quantity FROM items ORDER BY name ASC;'))
+		{
+			$items = [];
+
+			$stmt->execute();
+			$stmt->bind_result($id, $slug, $name, $value, $quantity);
+
+			while ($stmt->fetch())
+			{
+				$items[] = compact('id', 'slug', 'name', 'value', 'quantity');
+			}
+
+			$stmt->close();
+
+			return $items;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Create a new item.
+	 *
+	 * @param string $name       The base name of the item
+	 * @param string $nameSingle The singular phrase for the item
+	 * @param string $namePlural The plural phrase for the item
+	 * @param int    $value      The point value of the item
+	 * @param int    $quantity   The quantity of the item in the store
+	 * @param int    $weight     The weight of the item for the randomizer
+	 *
+	 * @return int The ID of the item
+	 */
+	public static function createItem(string $name, string $nameSingle, string $namePlural, int $value, int $quantity, int $weight)
+	{
+		if ($stmt = self::db()->prepare('INSERT INTO items (slug, name, nameSingle, namePlural, value, quantity, weight) VALUES (?, ?, ?, ?, ?, ?, ?);'))
+		{
+			$slug = self::getSlug($name);
+			$stmt->bind_param('ssssiii', $slug, $name, $nameSingle, $namePlural, $value, $quantity, $weight);
+			$success = $stmt->execute();
+			$stmt->close();
+
+			if ($success)
+			{
+				return self::db()->insert_id;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Update the details of an item.
+	 *
+	 * @param int    $itemId     The ID of the item
+	 * @param string $name       The base name of the item
+	 * @param string $nameSingle The singular phrase for the item
+	 * @param string $namePlural The plural phrase for the item
+	 * @param int    $value      The point value of the item
+	 * @param int    $quantity   The quantity of the item in the store
+	 * @param int    $weight     The weight of the item for the randomizer
+	 */
+	public static function updateItem(int $itemId, string $name, string $nameSingle, string $namePlural, int $value, int $quantity, int $weight)
+	{
+		if ($stmt = self::db()->prepare('UPDATE items SET slug = ?, name = ?, nameSingle = ?, namePlural = ?, value = ?, quantity = ?, weight = ? WHERE id = ?;'))
+		{
+			$newSlug = self::getSlug($name);
+			$stmt->bind_param('ssssiiii', $newSlug, $name, $nameSingle, $namePlural, $value, $quantity, $weight, $itemId);
+			$stmt->execute();
+			$stmt->close();
+		}
+	}
+
+	/**
+	 * Delete an item.
+	 *
+	 * @param int $itemId The ID of the item
+	 */
+	public static function deleteItem(int $itemId)
+	{
+		if ($stmt = self::db()->prepare('DELETE FROM items WHERE id = ?;'))
+		{
+			$stmt->bind_param('i', $itemId);
+			$stmt->execute();
+			$stmt->close();
+		}
+	}
+
+	/**
+	 * Get an item.
+	 *
+	 * @param string $varName  The name of the database column
+	 * @param string $varType  The type of database column
+	 * @param mixed  $variable The value of the database column
+	 *
+	 * @return array|boolean The item data, or false if the item is not found
+	 */
+	protected static function getItem(string $varName, string $varType, $variable)
+	{
+		$sql = sprintf('SELECT id, slug, name, nameSingle, namePlural, value, quantity, weight FROM items WHERE %s = ?;', $varName);
+		if ($stmt = self::db()->prepare($sql))
+		{
+			$stmt->bind_param($varType, $variable);
+			$stmt->execute();
+			$stmt->bind_result($id, $slug, $name, $nameSingle, $namePlural, $value, $quantity, $weight);
+			$stmt->fetch();
+			$stmt->close();
+		}
+
+		if ($id)
+		{
+			return compact('id', 'slug', 'name', 'nameSingle', 'namePlural', 'value', 'quantity', 'weight');
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the slug of an item based on its name.
+	 *
+	 * @param string $itemName The name of the item
+	 *
+	 * @return string The slug for the item
+	 */
+	protected static function getSlug(string $itemName)
+	{
+		return preg_replace('/[^a-z0-9\\-]/', '', strtolower(str_replace(' ', '-', $itemName)));
 	}
 }

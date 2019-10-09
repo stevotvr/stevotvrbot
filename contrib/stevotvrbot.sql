@@ -26,6 +26,7 @@ CREATE TABLE `inventory` (
 
 CREATE TABLE `items` (
   `id` int(11) NOT NULL,
+  `slug` varchar(64) NOT NULL,
   `name` varchar(64) NOT NULL,
   `nameSingle` varchar(64) NOT NULL,
   `namePlural` varchar(64) NOT NULL,
@@ -88,6 +89,7 @@ ALTER TABLE `items`
   ADD UNIQUE KEY `name` (`name`) USING BTREE,
   ADD UNIQUE KEY `nameSingle` (`nameSingle`),
   ADD UNIQUE KEY `namePlural` (`namePlural`),
+  ADD UNIQUE KEY `slug` (`slug`),
   ADD KEY `weight` (`weight`);
 
 ALTER TABLE `recipe`

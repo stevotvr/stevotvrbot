@@ -47,4 +47,71 @@ class CommandsModel extends Model
 
 		return false;
 	}
+
+	/**
+	 * Update the list of chat commands.
+	 * 
+	 * @param array[] The data for the commands
+	 */
+	public static function updateCommands(array $commands)
+	{
+		if ($stmt = self::db()->prepare("DELETE FROM commands;"))
+		{
+			$stmt->execute();
+			$stmt->close();
+		}
+
+		if ($stmt = self::db()->prepare("INSERT INTO commands (command, arguments, description, level) VALUES (?, ?, ?, ?);"))
+		{
+			$stmt->bind_param('sssi', $name, $arguments, $description, $level);
+			foreach ($commands as $command)
+			{
+				if (!isset($command['name'], $command['arguments'], $command['description'], $command['level']))
+				{
+					continue;
+				}
+
+				$name = $command['name'];
+				$arguments = $command['arguments'];
+				$description = $command['description'];
+				$level = $command['level'];
+				$stmt->execute();
+			}
+			$stmt->close();
+		}
+	}
+
+	/**
+	 * Add a chat command to the database.
+	 *
+	 * @param string $command     The command trigger
+	 * @param string $arguments   The arguments for the command
+	 * @param string $description The description of the command
+	 * @param int    $level       The user level required to execute the
+	 *                            command
+	 */
+	public static function addCommand(string $command, string $arguments, string $description, int $level)
+	{
+		if ($stmt = self::db()->prepare("INSERT INTO commands (command, arguments, description, level) VALUES (?, ?, ?, ?);"))
+		{
+			$stmt->bind_param('sssi', $command, $arguments, $description, $level);
+			$stmt->execute();
+			$stmt->close();
+		}
+	}
+
+	/**
+	 * Delete a chat command.
+	 *
+	 * @param int $id The ID of the command to delete
+	 */
+	public static function deleteCommand(int $id)
+	{
+		if ($stmt = self::db()->prepare("DELETE FROM commands WHERE id = ?;"))
+		{
+			$stmt->bind_param('i', $id);
+			$stmt->execute();
+			$stmt->close();
+		}
+	}
 }

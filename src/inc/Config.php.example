@@ -59,14 +59,4 @@ class Config
 	 * The Twitch application secret.
 	 */
 	const TWITCH_APP_SECRET = '';
-
-	/**
-	 * The StreamElements channel ID.
-	 */
-	const SE_CHANNEL_ID = '';
-
-	/**
-	 * The JWT token for authorizing StreamElements requests.
-	 */
-	const SE_JWT_TOKEN = '';
 }

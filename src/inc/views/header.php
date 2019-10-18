@@ -25,9 +25,6 @@
 			<li><a href="/">Home</a></li>
 			<li><a href="/schedule">Stream Schedule</a></li>
 			<li><a href="/commands">Chat Commands</a></li>
-			<li><a href="/inventory">Inventory</a></li>
-			<li><a href="/recipes">Item Crafting</a></li>
-			<li><a href="/store">Store</a></li>
 		</ul>
 		<h1>StevoTVRBot</h1>
 	</nav>

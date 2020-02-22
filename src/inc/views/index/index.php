@@ -4,12 +4,15 @@
 		</header>
 		<section id="twitch-embed">
 		</section>
+		<section>
+			<iframe src="https://mixer.com/embed/player/stevotvr?muted=1" width="100%" height="300"></iframe>
+		</section>
 	</section>
 	<script src="https://embed.twitch.tv/embed/v1.js"></script>
 	<script type="text/javascript">
       new Twitch.Embed("twitch-embed", {
         width: '100%',
-        height: 720,
+        height: 500,
         channel: "stevotvr"
       });
     </script>

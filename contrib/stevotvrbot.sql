@@ -17,6 +17,12 @@ CREATE TABLE `commands` (
   `level` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `platforms` (
+  `id` int(11) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `url` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `schedule` (
   `id` int(11) NOT NULL,
   `day` int(11) NOT NULL,
@@ -24,7 +30,7 @@ CREATE TABLE `schedule` (
   `minute` int(11) NOT NULL,
   `length` int(11) NOT NULL,
   `game` text NOT NULL,
-  `platform` text NOT NULL,
+  `platform` int(11) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -54,8 +60,12 @@ ALTER TABLE `commands`
   ADD PRIMARY KEY (`id`),
   ADD KEY `command` (`command`);
 
-ALTER TABLE `schedule`
+ALTER TABLE `platforms`
   ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `schedule`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `platform` (`platform`);
 
 ALTER TABLE `settings`
   ADD PRIMARY KEY (`setting`);
@@ -74,6 +84,9 @@ ALTER TABLE `users`
 ALTER TABLE `commands`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `platforms`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `schedule`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
@@ -82,6 +95,10 @@ ALTER TABLE `tips`
 
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+
+ALTER TABLE `schedule`
+  ADD CONSTRAINT `schedule_ibfk_1` FOREIGN KEY (`platform`) REFERENCES `platforms` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

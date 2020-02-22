@@ -11,7 +11,7 @@
 namespace StevoTVRBot\Page;
 
 use StevoTVRBot\Model\CommandsModel;
-use StevoTVRBot\Model\ItemsModel;
+use StevoTVRBot\Model\PlatformsModel;
 use StevoTVRBot\Model\ScheduleModel;
 use StevoTVRBot\Model\SettingsModel;
 use StevoTVRBot\Model\TipsModel;
@@ -183,6 +183,7 @@ class AdminPage extends Page
 				'Friday',
 				'Saturday',
 			],
+			'platforms'	=> PlatformsModel::getPlatforms() ?? [],
 			'schedule'	=> [],
 			'action'	=> '/admin/schedule',
 		];
@@ -201,6 +202,7 @@ class AdminPage extends Page
 					];
 
 					$lengths = filter_input(INPUT_POST, 'schedule_length', FILTER_VALIDATE_INT, $options) ?? [];
+					$platforms = filter_input(INPUT_POST, 'schedule_platform', FILTER_VALIDATE_INT, $options) ?? [];
 
 					$options['options']['max_range'] = 6;
 					$days = filter_input(INPUT_POST, 'schedule_day', FILTER_VALIDATE_INT, $options) ?? [];
@@ -212,7 +214,6 @@ class AdminPage extends Page
 					$minutes = filter_input(INPUT_POST, 'schedule_minute', FILTER_VALIDATE_INT, $options) ?? [];
 
 					$games = filter_input(INPUT_POST, 'schedule_game', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) ?? [];
-					$platforms = filter_input(INPUT_POST, 'schedule_platform', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) ?? [];
 
 					$count = count($lengths);
 					if ($count !== count($days) || $count !== count($hours) || $count !== count($minutes) || $count !== count($games) || $count !== count($platforms))
@@ -264,7 +265,7 @@ class AdminPage extends Page
 				'minute'	=> $day['minute'],
 				'length'	=> $day['length'],
 				'game'		=> htmlspecialchars($day['game']),
-				'platform'	=> htmlspecialchars($day['platform']),
+				'platform'	=> $day['platform'],
 				'active'	=> (bool) $day['active'],
 			];
 		}

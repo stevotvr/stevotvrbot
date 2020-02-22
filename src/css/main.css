@@ -133,3 +133,7 @@ th, td {
 #inventory dt, #inventory dd, #store dt, #store dd {
 	display: inline;
 }
+
+.nowrap {
+	white-space: nowrap;
+}

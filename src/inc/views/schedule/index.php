@@ -15,14 +15,16 @@
 <?php if (!$singleGame): ?>
 					<th>Game</th>
 <?php endif; ?>
+					<th>Platform</th>
 				</tr>
 <?php foreach ($schedule as $item): ?>
 				<tr>
 					<td><?php echo $item['day']; ?></td>
 					<td><?php echo $item['time']; ?></td>
 <?php if (!$singleGame): ?>
-					<td><?php echo $item['game']; ?></td>
+					<td class="nowrap"><?php echo $item['game']; ?></td>
 <?php endif; ?>
+					<td><a href="<?php echo $item['platform']['url']; ?>"><?php echo $item['platform']['name']; ?></a></td>
 				</tr>
 <?php endforeach; ?>
 			</table>

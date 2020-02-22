@@ -31,7 +31,11 @@
 						<td><input type="number" min="0" max="59" name="schedule_minute[<?php echo $day['id']; ?>]" value="<?php echo $day['minute']; ?>"></td>
 						<td><input type="number" min="0" name="schedule_length[<?php echo $day['id']; ?>]" value="<?php echo $day['length']; ?>"></td>
 						<td><input type="text" name="schedule_game[<?php echo $day['id']; ?>]" value="<?php echo $day['game']; ?>"></td>
-						<td><input type="text" name="schedule_platform[<?php echo $day['id']; ?>]" value="<?php echo $day['platform']; ?>"></td>
+						<td><select name="schedule_platform[<?php echo $day['id']; ?>]">
+<?php foreach ($platforms as $platform): ?>
+							<option value="<?php echo $platform['id']; ?>"<?php if ($platform['id'] === $day['platform']): ?> selected<?php endif; ?>><?php echo $platform['name']; ?></option>
+<?php endforeach; ?>
+						</select></td>
 						<td><input type="checkbox" name="schedule_active[<?php echo $day['id']; ?>]"<?php if ($day['active']): ?> checked<?php endif; ?>></td>
 						<td><input type="checkbox" name="schedule_delete[<?php echo $day['id']; ?>]"></td>
 					</tr>
@@ -74,7 +78,11 @@
 					</tr>
 					<tr>
 						<td><label for="schedule_platform">Platform:</label></td>
-						<td><input type="text" id="schedule_platform" name="schedule_platform"></td>
+						<td><select name="schedule_platform">
+<?php foreach ($platforms as $platform): ?>
+							<option value="<?php echo $platform['id']; ?>"><?php echo $platform['name']; ?></option>
+<?php endforeach; ?>
+						</select></td>
 					</tr>
 					<tr>
 						<td><label for="schedule_active">Active:</label></td>

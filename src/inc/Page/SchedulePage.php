@@ -12,6 +12,7 @@ namespace StevoTVRBot\Page;
 
 use StevoTVRBot\Config;
 use StevoTVRBot\Model\SettingsModel;
+use StevoTVRBot\Model\PlatformsModel;
 use StevoTVRBot\Model\ScheduleModel;
 
 /**
@@ -27,6 +28,15 @@ class SchedulePage extends Page
 		$schedule = ScheduleModel::get() ?? [];
 		$singleGame = SettingsModel::get('schedule_single_game') === '1';
 
+		$platforms = [];
+		foreach (PlatformsModel::getPlatforms() ?? [] as $platform)
+		{
+			$platforms[$platform['id']] = [
+				'name'	=> htmlspecialchars($platform['name']),
+				'url'	=> htmlspecialchars($platform['url']),
+			];
+		}
+
 		if (filter_input(INPUT_GET, 'json'))
 		{
 			header('Access-Control-Allow-Origin: *');
@@ -38,7 +48,7 @@ class SchedulePage extends Page
 				foreach ($schedule as &$item)
 				{
 					$item['game'] = $game;
-					$item['platform'] = $platform;
+					$item['platform'] = $platforms[$platform];
 				}
 			}
 
@@ -53,7 +63,7 @@ class SchedulePage extends Page
 
 			if ($singleGame)
 			{
-				$data['game'] = htmlspecialchars(sprintf('%s (%s)', SettingsModel::get('schedule_game'), SettingsModel::get('schedule_platform')));;
+				$data['game'] = htmlspecialchars(SettingsModel::get('schedule_game'));;
 			}
 
 			$days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -63,9 +73,10 @@ class SchedulePage extends Page
 			{
 				$dt->setTime($item['hour'], $item['minute']);
 				$data['schedule'][] = [
-					'day'	=> $days[$item['day']],
-					'time'	=> htmlspecialchars($dt->format('g:ia T')),
-					'game'	=> $singleGame ? null : htmlspecialchars(sprintf('%s (%s)', $item['game'], $item['platform'])),
+					'day'		=> $days[$item['day']],
+					'time'		=> htmlspecialchars($dt->format('g:ia T')),
+					'game'		=> $singleGame ? null : htmlspecialchars($item['game']),
+					'platform'	=> $platforms[$item['platform']],
 				];
 			}
 

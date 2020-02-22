@@ -114,7 +114,7 @@ class AdminPage extends Page
 					$deletes = filter_input(INPUT_POST, 'command_delete', FILTER_VALIDATE_BOOLEAN, $options) ?? [];
 
 					$nameCount = count($names);
-					if ($nameCount !== count($arguments) || $commandCount !== count($descriptions) || $commandCount !== count($levels))
+					if ($nameCount !== count($arguments) || $nameCount !== count($descriptions) || $nameCount !== count($levels))
 					{
 						$data['error'][] = 'Invalid input';
 						break;
@@ -155,10 +155,11 @@ class AdminPage extends Page
 		}
 
 		$commands = CommandsModel::getCommands();
+		$id = 0;
 		foreach ($commands as $command)
 		{
 			$data['commands'][] = [
-				'id'			=> $command['id'],
+				'id'			=> $id++,
 				'name'			=> htmlspecialchars($command['command']),
 				'arguments'		=> htmlspecialchars($command['arguments']),
 				'description'	=> htmlspecialchars($command['description']),
